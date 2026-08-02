@@ -9,7 +9,7 @@ Start-Process -FilePath $pwshPath -ArgumentList "-NoProfile -ExecutionPolicy Byp
 exit
 } else {
 Add-Type -AssemblyName System.Windows.Forms
-[System.Windows.Forms.MessageBox]::Show("PowerShell 7.4+ is required. Please run setup.bat first.", "Allium", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error) | Out-Null
+[System.Windows.Forms.MessageBox]::Show("PowerShell 7.4+ is required. Please run setup.bat first.", "Vantastrap", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error) | Out-Null
 exit 1
 }
 }
@@ -26,20 +26,20 @@ exit
 }
 Import-Module WinUIShell -ErrorAction SilentlyContinue 2>$null
 try {
-Add-Type -Name Win32Hide -Namespace Allium -MemberDefinition @"
+Add-Type -Name Win32Hide -Namespace Vantastrap -MemberDefinition @"
         [DllImport("kernel32.dll")] public static extern IntPtr GetConsoleWindow();
         [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 "@ -ErrorAction SilentlyContinue
-$hwnd = [Allium.Win32Hide]::GetConsoleWindow()
+$hwnd = [Vantastrap.Win32Hide]::GetConsoleWindow()
 if ($hwnd -ne [System.IntPtr]::Zero) {
-[Allium.Win32Hide]::ShowWindow($hwnd, 0) | Out-Null
+[Vantastrap.Win32Hide]::ShowWindow($hwnd, 0) | Out-Null
 }
 } catch {}
 try {
-Add-Type -Name KbdState -Namespace Allium -MemberDefinition '[DllImport("user32.dll")] public static extern short GetAsyncKeyState(int vKey); [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow(); [DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern IntPtr FindWindowW(IntPtr lpClassName, string lpWindowName);' -ErrorAction SilentlyContinue
+Add-Type -Name KbdState -Namespace Vantastrap -MemberDefinition '[DllImport("user32.dll")] public static extern short GetAsyncKeyState(int vKey); [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow(); [DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern IntPtr FindWindowW(IntPtr lpClassName, string lpWindowName);' -ErrorAction SilentlyContinue
 } catch {}
 try {
-Add-Type -Name DialogFocus -Namespace Allium -MemberDefinition @"
+Add-Type -Name DialogFocus -Namespace Vantastrap -MemberDefinition @"
         [DllImport("user32.dll")]
         public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
         [DllImport("user32.dll")]
@@ -47,7 +47,7 @@ Add-Type -Name DialogFocus -Namespace Allium -MemberDefinition @"
 "@ -ErrorAction SilentlyContinue
 } catch {}
 try {
-Add-Type -Name Win32Tray -Namespace Allium -MemberDefinition @'
+Add-Type -Name Win32Tray -Namespace Vantastrap -MemberDefinition @'
         public const int  NIM_ADD               = 0x00000000;
         public const int  NIM_MODIFY            = 0x00000001;
         public const int  NIM_DELETE            = 0x00000002;
@@ -175,14 +175,14 @@ Add-Type -Name Win32Tray -Namespace Allium -MemberDefinition @'
         [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
         public static extern int SetWindowTheme(IntPtr hwnd, string pszSubAppName, string pszSubIdList);
 '@ -ErrorAction SilentlyContinue
-if (-not ('Allium.ProcessAttach' -as [type])) {
+if (-not ('Vantastrap.ProcessAttach' -as [type])) {
 Add-Type -Language CSharp -ErrorAction SilentlyContinue -TypeDefinition @'
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
-namespace Allium
+namespace Vantastrap
 {
     public static class NtStatus
     {
@@ -328,14 +328,14 @@ namespace Allium
 }
 '@
 }
-if (-not ('Allium.ProcessSuspension' -as [type])) {
+if (-not ('Vantastrap.ProcessSuspension' -as [type])) {
 Add-Type -Language CSharp -ErrorAction SilentlyContinue -TypeDefinition @'
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.Win32.SafeHandles;
 using System.ComponentModel;
-namespace Allium
+namespace Vantastrap
 {
     public static class ProcessSuspension
     {
@@ -392,13 +392,13 @@ namespace Allium
 }
 '@
 }
-if (-not ('Allium.ChannelWriter' -as [type])) {
+if (-not ('Vantastrap.ChannelWriter' -as [type])) {
 Add-Type -Language CSharp -ErrorAction SilentlyContinue -TypeDefinition @'
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
-namespace Allium
+namespace Vantastrap
 {
     public sealed class WriteResult
     {
@@ -459,14 +459,14 @@ namespace Allium
 }
 '@
 }
-if (-not ('Allium.HashmapWalker' -as [type])) {
+if (-not ('Vantastrap.HashmapWalker' -as [type])) {
 Add-Type -Language CSharp -ErrorAction SilentlyContinue -TypeDefinition @'
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
-namespace Allium
+namespace Vantastrap
 {
     public sealed class Offsets
     {
@@ -713,7 +713,7 @@ namespace Allium
             return true;
         }
     }
-    public static class AlliumOffsetsModule
+    public static class VantastrapOffsetsModule
     {
         public static readonly Offsets Current = new Offsets(
             oEnd: 0x00, oList: 0x10, oMask: 0x28, oNext: 0x08,
@@ -723,7 +723,7 @@ namespace Allium
 }
 '@
 }
-if (-not ('Allium.TypedWriters' -as [type])) {
+if (-not ('Vantastrap.TypedWriters' -as [type])) {
 Add-Type -Language CSharp -ErrorAction SilentlyContinue -TypeDefinition @'
 using System;
 using System.Buffers.Binary;
@@ -731,7 +731,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
-namespace Allium
+namespace Vantastrap
 {
     public sealed class TypedWriteResult
     {
@@ -864,10 +864,10 @@ namespace Allium
 }
 '@
 }
-if (-not ('Allium.InjectionResult' -as [type])) {
+if (-not ('Vantastrap.InjectionResult' -as [type])) {
 Add-Type -Language CSharp -ErrorAction SilentlyContinue -TypeDefinition @'
 using System;
-namespace Allium
+namespace Vantastrap
 {
     public sealed class InjectionResult
     {
@@ -894,13 +894,13 @@ namespace Allium
 '@
 }
 } catch {}
-if (-not ('Allium.PatternScanner' -as [type])) {
+if (-not ('Vantastrap.PatternScanner' -as [type])) {
 Add-Type -Language CSharp -ErrorAction SilentlyContinue -TypeDefinition @'
 using System;
 using System.Runtime.InteropServices;
 using System.Globalization;
 using Microsoft.Win32.SafeHandles;
-namespace Allium
+namespace Vantastrap
 {
     [StructLayout(LayoutKind.Sequential)]
     internal struct BLOCK_G_MBI
@@ -1102,13 +1102,13 @@ namespace Allium
 }
 '@
 }
-if (-not ('Allium.PeSectionEnumerator' -as [type])) {
+if (-not ('Vantastrap.PeSectionEnumerator' -as [type])) {
 Add-Type -Language CSharp -ErrorAction SilentlyContinue -TypeDefinition @'
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
-namespace Allium
+namespace Vantastrap
 {
     internal static class HRsNative
     {
@@ -1274,14 +1274,14 @@ namespace Allium
 }
 '@
 }
-if (-not ('Allium.StaticFlagExtractor' -as [type])) {
+if (-not ('Vantastrap.StaticFlagExtractor' -as [type])) {
 Add-Type -Language CSharp -ErrorAction SilentlyContinue -TypeDefinition @'
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
-namespace Allium
+namespace Vantastrap
 {
     [StructLayout(LayoutKind.Sequential)]
     internal struct SFE_MBI
@@ -1745,7 +1745,7 @@ namespace Allium
 }
 '@
 }
-if (-not ('Allium.FlagValueMapScanner' -as [type])) {
+if (-not ('Vantastrap.FlagValueMapScanner' -as [type])) {
 Add-Type -Language CSharp -ErrorAction SilentlyContinue -TypeDefinition @'
 using System;
 using System.Collections.Generic;
@@ -1753,7 +1753,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
-namespace Allium
+namespace Vantastrap
 {
     public sealed class FlagValueMapEntry
     {
@@ -2135,7 +2135,7 @@ namespace Allium
 '@
 }
 $script:HttpsCaCompileError = $null
-if (-not ('Allium.HttpsCaGenerator' -as [type])) {
+if (-not ('Vantastrap.HttpsCaGenerator' -as [type])) {
 try {
 Add-Type -Language CSharp -ErrorAction Stop -TypeDefinition @'
 using System;
@@ -2143,12 +2143,12 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 #pragma warning disable SYSLIB0057
-namespace Allium
+namespace Vantastrap
 {
     public static class HttpsCaGenerator
     {
-        public const string CaSubject = "CN=Allium Local Proxy CA, O=Allium, OU=HTTPS Interception";
-        public const string PfxPassword = "allium";
+        public const string CaSubject = "CN=Vantastrap Local Proxy CA, O=Vantastrap, OU=HTTPS Interception";
+        public const string PfxPassword = "Vantastrap";
         public static X509Certificate2 GenerateRootCa(int validityYears)
         {
             if (validityYears <= 0) { validityYears = 10; }
@@ -2216,7 +2216,7 @@ Write-Host '[HTTPS CA] Details captured in $script:HttpsCaCompileError' -Foregro
 }
 }
 $script:HttpsInterceptorCompileError = $null
-if (-not ('Allium.HttpsInterceptor' -as [type])) {
+if (-not ('Vantastrap.HttpsInterceptor' -as [type])) {
 try {
 $__zstdScriptRoot = if ([string]::IsNullOrWhiteSpace($PSScriptRoot)) {
 Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -2227,7 +2227,7 @@ $__zstdDllProbe = Join-Path $__zstdScriptRoot 'data\deps\ZstdSharp.dll'
 if (-not (Test-Path $__zstdDllProbe -PathType Leaf)) {
 Write-Host '[HTTPS Proxy] Skipping HttpsInterceptor compile: ZstdSharp.dll missing at ' -NoNewline -ForegroundColor Yellow
 Write-Host $__zstdDllProbe -ForegroundColor Yellow
-Write-Host '[HTTPS Proxy] Re-run Allium-Setup.ps1 to install ZstdSharp.dll into data\deps\' -ForegroundColor Yellow
+Write-Host '[HTTPS Proxy] Re-run Vantastrap-Setup.ps1 to install ZstdSharp.dll into data\deps\' -ForegroundColor Yellow
 $script:HttpsInterceptorCompileError = 'ZstdSharp.dll missing; skipped compile'
 return
 }
@@ -2254,11 +2254,11 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 #pragma warning disable SYSLIB0057
-namespace Allium
+namespace Vantastrap
 {
     public static class HttpsLeafCertFactory
     {
-        public const string PfxPassword = "allium";
+        public const string PfxPassword = "Vantastrap";
         private static X509Certificate2 _rootCa;
         private static readonly ConcurrentDictionary<string, X509Certificate2> _cache =
             new ConcurrentDictionary<string, X509Certificate2>(StringComparer.OrdinalIgnoreCase);
@@ -2636,7 +2636,7 @@ namespace Allium
             {
                 string dir = System.IO.Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                    "Allium");
+                    "Vantastrap");
                 if (!System.IO.Directory.Exists(dir))
                 {
                     System.IO.Directory.CreateDirectory(dir);
@@ -3035,7 +3035,7 @@ namespace Allium
             catch (Exception ex)
             {
                 respStatus = 502;
-                respBody = System.Text.Encoding.UTF8.GetBytes("Allium upstream error: " + ex.Message);
+                respBody = System.Text.Encoding.UTF8.GetBytes("Vantastrap upstream error: " + ex.Message);
                 respHeaders.Clear();
                 respHeaders["Content-Type"] = "text/plain";
                 note = "upstream error";
@@ -3570,19 +3570,19 @@ Write-Host '[HTTPS Proxy] Details captured in $script:HttpsInterceptorCompileErr
 }
 }
 $script:AppVersion = "1.0.0"
-$script:AppTitle = "Allium"
+$script:AppTitle = "Vantastrap"
 $_scriptRoot = if ([string]::IsNullOrWhiteSpace($PSScriptRoot)) { Split-Path -Parent $MyInvocation.MyCommand.Path } else { $PSScriptRoot }
-$script:AlliumScriptPath = if ([string]::IsNullOrWhiteSpace($PSCommandPath)) { $MyInvocation.MyCommand.Path } else { $PSCommandPath }
+$script:VantastrapScriptPath = if ([string]::IsNullOrWhiteSpace($PSCommandPath)) { $MyInvocation.MyCommand.Path } else { $PSCommandPath }
 $script:DataRoot = Join-Path $_scriptRoot "data"
-$script:IconPath = Join-Path $script:DataRoot "allium-icon.ico"
+$script:IconPath = Join-Path $script:DataRoot "Vantastrap-icon.ico"
 $script:ProfilesRoot = Join-Path $script:DataRoot "profiles"
 $script:FlagsFile = Join-Path $script:DataRoot "flags.json"
 $script:SettingsFile = Join-Path $script:DataRoot "settings.json"
 $script:BootstrappersFile = Join-Path $script:DataRoot "bootstrappers.json"
 $script:DebugLogFile = Join-Path $script:DataRoot "debug.log"
 $script:HttpsInterceptCaDir = Join-Path $script:DataRoot "proxy_ca"
-$script:HttpsInterceptCaPfxFile = Join-Path $script:HttpsInterceptCaDir "allium-ca.pfx"
-$script:HttpsInterceptCaPemFile = Join-Path $script:HttpsInterceptCaDir "allium-ca.pem"
+$script:HttpsInterceptCaPfxFile = Join-Path $script:HttpsInterceptCaDir "Vantastrap-ca.pfx"
+$script:HttpsInterceptCaPemFile = Join-Path $script:HttpsInterceptCaDir "Vantastrap-ca.pem"
 $script:HttpsInterceptRulesFile = Join-Path $script:DataRoot "https-rules.json"
 $script:DepsDir = Join-Path $script:DataRoot "deps"
 $script:ZstdSharpDllPath = Join-Path $script:DepsDir "ZstdSharp.dll"
@@ -3681,15 +3681,15 @@ $owner.Opacity = 0
 $owner.Show()
 [System.Windows.Forms.Application]::DoEvents()
 try {
-[Allium.DialogFocus]::keybd_event(0x12, 0, 0, [UIntPtr]::Zero)
-[Allium.DialogFocus]::keybd_event(0x12, 0, 2, [UIntPtr]::Zero)
+[Vantastrap.DialogFocus]::keybd_event(0x12, 0, 0, [UIntPtr]::Zero)
+[Vantastrap.DialogFocus]::keybd_event(0x12, 0, 2, [UIntPtr]::Zero)
 } catch {}
 $owner.Activate()
 $owner.BringToFront()
 try {
 $SWP_NOMOVE = 0x0002; $SWP_NOSIZE = 0x0001; $swpFlags = $SWP_NOMOVE -bor $SWP_NOSIZE
-[void][Allium.DialogFocus]::SetWindowPos($owner.Handle, [IntPtr]::new(-1), 0, 0, 0, 0, $swpFlags)
-[void][Allium.DialogFocus]::SetWindowPos($owner.Handle, [IntPtr]::new(-2), 0, 0, 0, 0, $swpFlags)
+[void][Vantastrap.DialogFocus]::SetWindowPos($owner.Handle, [IntPtr]::new(-1), 0, 0, 0, 0, $swpFlags)
+[void][Vantastrap.DialogFocus]::SetWindowPos($owner.Handle, [IntPtr]::new(-2), 0, 0, 0, 0, $swpFlags)
 } catch {}
 [System.Windows.Forms.Application]::DoEvents()
 $result = $Dialog.ShowDialog($owner)
@@ -3713,8 +3713,8 @@ return $profPath
 }
 function Ensure-Icons {
 Ensure-DataFolder | Out-Null
-$icoPath = Join-Path $script:DataRoot "allium-icon.ico"
-$pngPath = Join-Path $script:DataRoot "allium-icon.png"
+$icoPath = Join-Path $script:DataRoot "Vantastrap-icon.ico"
+$pngPath = Join-Path $script:DataRoot "Vantastrap-icon.png"
 $icoUrl = "https://github.com/fwOnion/Log-v1.0/releases/download/ico/new.ico"
 $pngUrl = "https://github.com/fwOnion/Log-v1.0/releases/download/ico/new.png"
 if (-not (Test-Path $icoPath)) {
@@ -3728,8 +3728,8 @@ Invoke-WebRequest -Uri $pngUrl -OutFile $pngPath -UseBasicParsing -ErrorAction S
 } catch { Write-ConsoleLog -Message "Failed to download PNG icon: $_" -Level "WARN" }
 }
 $scriptRoot = if ([string]::IsNullOrWhiteSpace($PSScriptRoot)) { Split-Path -Parent $MyInvocation.MyCommand.Path } else { $PSScriptRoot }
-$oldIco = Join-Path $scriptRoot "allium-icon.ico"
-$oldPng = Join-Path $scriptRoot "allium-icon.png"
+$oldIco = Join-Path $scriptRoot "Vantastrap-icon.ico"
+$oldPng = Join-Path $scriptRoot "Vantastrap-icon.png"
 if ((Test-Path $oldIco) -and ($oldIco -ne $icoPath)) {
 try { Remove-Item $oldIco -Force -ErrorAction SilentlyContinue } catch {}
 }
@@ -3945,29 +3945,29 @@ try { $script:WatchdogFileWatcher.EnableRaisingEvents = $true } catch {}
 return $false
 }
 }
-function Backup-AlliumFileOnce {
+function Backup-VantastrapFileOnce {
 param([Parameter(Mandatory)][string]$Path)
 if (-not (Test-Path $Path -PathType Leaf)) { return $false }
-$backup = "$Path.allium.bak"
+$backup = "$Path.Vantastrap.bak"
 if (Test-Path $backup -PathType Leaf) { return $true }
 try {
 Copy-Item -LiteralPath $Path -Destination $backup -Force -ErrorAction Stop
 return $true
 } catch {
-Write-ConsoleLog -Message "Backup-AlliumFileOnce failed for $Path : $_" -Level 'WARN'
+Write-ConsoleLog -Message "Backup-VantastrapFileOnce failed for $Path : $_" -Level 'WARN'
 return $false
 }
 }
-function Restore-AlliumBackup {
+function Restore-VantastrapBackup {
 param([Parameter(Mandatory)][string]$Path)
-$backup = "$Path.allium.bak"
+$backup = "$Path.Vantastrap.bak"
 if (-not (Test-Path $backup -PathType Leaf)) { return $false }
 try {
 Copy-Item -LiteralPath $backup -Destination $Path -Force -ErrorAction Stop
 Remove-Item -LiteralPath $backup -Force -ErrorAction SilentlyContinue
 return $true
 } catch {
-Write-ConsoleLog -Message "Restore-AlliumBackup failed for $Path : $_" -Level 'WARN'
+Write-ConsoleLog -Message "Restore-VantastrapBackup failed for $Path : $_" -Level 'WARN'
 return $false
 }
 }
@@ -3980,11 +3980,11 @@ Write-ConsoleLog -Message "Failed to create $script:HttpsInterceptCaDir : $_" -L
 }
 }
 }
-function Import-AlliumDependencies {
+function Import-VantastrapDependencies {
 $script:ZstdSharpLoaded = $false
 $script:ZstdSharpCompileError = $null
 if (-not (Test-Path $script:ZstdSharpDllPath -PathType Leaf)) {
-Write-ConsoleLog -Message ('ZstdSharp.dll not found at ' + $script:ZstdSharpDllPath + '; HTTPS Interception zstd decompression unavailable until Allium-Setup.ps1 is re-run.') -Level 'INFO'
+Write-ConsoleLog -Message ('ZstdSharp.dll not found at ' + $script:ZstdSharpDllPath + '; HTTPS Interception zstd decompression unavailable until Vantastrap-Setup.ps1 is re-run.') -Level 'INFO'
 return $false
 }
 if ($null -ne ('ZstdSharp.Decompressor' -as [type])) {
@@ -4009,16 +4009,16 @@ Write-Host '[ZstdSharp] Details captured in $script:ZstdSharpCompileError' -Fore
 return $false
 }
 }
-function Test-AlliumZstdSharp {
+function Test-VantastrapZstdSharp {
 if (-not $script:ZstdSharpLoaded) {
 return @{
 Success = $false
-Reason = 'ZstdSharp not loaded. Call Import-AlliumDependencies first, or re-run Allium-Setup.ps1.'
+Reason = 'ZstdSharp not loaded. Call Import-VantastrapDependencies first, or re-run Vantastrap-Setup.ps1.'
 Loaded = $false
 }
 }
 try {
-$srcText = 'Hello Allium, this is a ZstdSharp smoke-test payload. Repeat: Hello Allium, this is a ZstdSharp smoke-test payload.'
+$srcText = 'Hello Vantastrap, this is a ZstdSharp smoke-test payload. Repeat: Hello Vantastrap, this is a ZstdSharp smoke-test payload.'
 $srcBytes = [System.Text.Encoding]::UTF8.GetBytes($srcText)
 $compressBound = [ZstdSharp.Compressor]::GetCompressBound($srcBytes.Length)
 $compressedBuf = New-Object byte[] $compressBound
@@ -4057,28 +4057,28 @@ Reason = ('Exception during roundtrip: ' + $_.Exception.Message)
 }
 }
 }
-function Test-AlliumDictionaryFetch {
+function Test-VantastrapDictionaryFetch {
 param(
 [Parameter(Mandatory)][string]$Sha256Hex,
 [int]$TimeoutSeconds = 15
 )
-if ($null -eq ('Allium.ClientSettingsDictionaryCache' -as [type])) {
+if ($null -eq ('Vantastrap.ClientSettingsDictionaryCache' -as [type])) {
 return @{
 Success = $false
-Reason = 'Allium.ClientSettingsDictionaryCache type not loaded. Are the U1e-b C# changes applied and Allium dot-sourced?'
+Reason = 'Vantastrap.ClientSettingsDictionaryCache type not loaded. Are the U1e-b C# changes applied and Vantastrap dot-sourced?'
 }
 }
 $wasCached = $false
 try {
-$wasCached = ($null -ne [Allium.ClientSettingsDictionaryCache]::TryGetCached($Sha256Hex))
+$wasCached = ($null -ne [Vantastrap.ClientSettingsDictionaryCache]::TryGetCached($Sha256Hex))
 } catch {}
 $client = $null
 $cts = New-Object System.Threading.CancellationTokenSource
 $cts.CancelAfter([TimeSpan]::FromSeconds($TimeoutSeconds))
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 try {
-$client = [Allium.ClientSettingsDictionaryCache]::CreateStandaloneHttpClient()
-$task = [Allium.ClientSettingsDictionaryCache]::FetchAsync($Sha256Hex, $client, $cts.Token)
+$client = [Vantastrap.ClientSettingsDictionaryCache]::CreateStandaloneHttpClient()
+$task = [Vantastrap.ClientSettingsDictionaryCache]::FetchAsync($Sha256Hex, $client, $cts.Token)
 $task.Wait()
 $bytes = $task.Result
 $sw.Stop()
@@ -4088,8 +4088,8 @@ Sha256 = $Sha256Hex
 WasCached = $wasCached
 BytesReceived = $bytes.Length
 ElapsedMs = $sw.ElapsedMilliseconds
-CacheEntryCount = [Allium.ClientSettingsDictionaryCache]::CacheEntryCount
-TotalCacheBytes = [Allium.ClientSettingsDictionaryCache]::TotalCacheBytes
+CacheEntryCount = [Vantastrap.ClientSettingsDictionaryCache]::CacheEntryCount
+TotalCacheBytes = [Vantastrap.ClientSettingsDictionaryCache]::TotalCacheBytes
 Reason = if ($wasCached) { 'cache hit' } else { 'fresh fetch + SHA-256 verified' }
 }
 } catch {
@@ -4111,64 +4111,64 @@ if ($null -ne $client) { try { $client.Dispose() } catch {} }
 $script:HttpsInterceptorInstance = $null
 $script:HttpsWatchdogRefreshTimer = $null
 $script:HttpsHostsPath = Join-Path $env:SystemRoot 'System32\drivers\etc\hosts'
-$script:HttpsWatchdogTaskName = 'Allium-HostsWatchdog'
-function Install-AlliumHosts {
+$script:HttpsWatchdogTaskName = 'Vantastrap-HostsWatchdog'
+function Install-VantastrapHosts {
 if (-not (Test-Path $script:HttpsHostsPath -PathType Leaf)) {
-Write-ConsoleLog -Message ('Install-AlliumHosts: hosts file missing at ' + $script:HttpsHostsPath) -Level 'ERROR'
+Write-ConsoleLog -Message ('Install-VantastrapHosts: hosts file missing at ' + $script:HttpsHostsPath) -Level 'ERROR'
 return $false
 }
 try {
 $existing = [System.IO.File]::ReadAllText($script:HttpsHostsPath)
-if ($existing.Contains('# ==== BEGIN ALLIUM HOSTS')) {
-Write-ConsoleLog -Message 'Install-AlliumHosts: sentinel already present; idempotent skip.' -Level 'INFO'
+if ($existing.Contains('# ==== BEGIN Vantastrap HOSTS')) {
+Write-ConsoleLog -Message 'Install-VantastrapHosts: sentinel already present; idempotent skip.' -Level 'INFO'
 return $true
 }
-Backup-AlliumFileOnce -Path $script:HttpsHostsPath | Out-Null
+Backup-VantastrapFileOnce -Path $script:HttpsHostsPath | Out-Null
 $nowIso = ([datetime]::UtcNow).ToString('yyyy-MM-ddTHH:mm:ssZ')
-$block = "`n# ==== BEGIN ALLIUM HOSTS ====`n" +
+$block = "`n# ==== BEGIN Vantastrap HOSTS ====`n" +
 "# Generated: $nowIso`n" +
-"# Source:    Allium HTTPS Interception (Phase U1)`n" +
+"# Source:    Vantastrap HTTPS Interception (Phase U1)`n" +
 "127.0.0.1 clientsettings.roblox.com`n" +
 "127.0.0.1 clientsettingscdn.roblox.com`n" +
-"# ==== END ALLIUM HOSTS ====`n"
+"# ==== END Vantastrap HOSTS ====`n"
 [System.IO.File]::AppendAllText($script:HttpsHostsPath, $block)
-Write-ConsoleLog -Message 'Install-AlliumHosts: sentinel block appended.' -Level 'INFO'
+Write-ConsoleLog -Message 'Install-VantastrapHosts: sentinel block appended.' -Level 'INFO'
 return $true
 } catch {
-Write-ConsoleLog -Message ('Install-AlliumHosts failed: ' + $_.Exception.Message) -Level 'ERROR'
+Write-ConsoleLog -Message ('Install-VantastrapHosts failed: ' + $_.Exception.Message) -Level 'ERROR'
 return $false
 }
 }
-function Uninstall-AlliumHosts {
+function Uninstall-VantastrapHosts {
 if (-not (Test-Path $script:HttpsHostsPath -PathType Leaf)) { return $false }
 try {
 $existing = [System.IO.File]::ReadAllText($script:HttpsHostsPath)
-if ($existing.Contains('# ==== BEGIN ALLIUM HOSTS')) {
-$pattern = '(?s)\r?\n?# ==== BEGIN ALLIUM HOSTS ====.*?# ==== END ALLIUM HOSTS ====\r?\n?'
+if ($existing.Contains('# ==== BEGIN Vantastrap HOSTS')) {
+$pattern = '(?s)\r?\n?# ==== BEGIN Vantastrap HOSTS ====.*?# ==== END Vantastrap HOSTS ====\r?\n?'
 $stripped = [regex]::Replace($existing, $pattern, '')
 [System.IO.File]::WriteAllText($script:HttpsHostsPath, $stripped)
-try { Remove-Item -LiteralPath ($script:HttpsHostsPath + '.allium.bak') -Force -ErrorAction SilentlyContinue } catch {}
-Write-ConsoleLog -Message 'Uninstall-AlliumHosts: sentinel block stripped.' -Level 'INFO'
+try { Remove-Item -LiteralPath ($script:HttpsHostsPath + '.Vantastrap.bak') -Force -ErrorAction SilentlyContinue } catch {}
+Write-ConsoleLog -Message 'Uninstall-VantastrapHosts: sentinel block stripped.' -Level 'INFO'
 return $true
 }
-if (Restore-AlliumBackup -Path $script:HttpsHostsPath) {
-Write-ConsoleLog -Message 'Uninstall-AlliumHosts: restored from backup (sentinel was missing).' -Level 'INFO'
+if (Restore-VantastrapBackup -Path $script:HttpsHostsPath) {
+Write-ConsoleLog -Message 'Uninstall-VantastrapHosts: restored from backup (sentinel was missing).' -Level 'INFO'
 return $true
 }
 return $false
 } catch {
-Write-ConsoleLog -Message ('Uninstall-AlliumHosts failed: ' + $_.Exception.Message) -Level 'ERROR'
+Write-ConsoleLog -Message ('Uninstall-VantastrapHosts failed: ' + $_.Exception.Message) -Level 'ERROR'
 return $false
 }
 }
-function Register-AlliumHostsWatchdog {
-$__wdDir = Join-Path $env:ProgramData 'Allium'
+function Register-VantastrapHostsWatchdog {
+$__wdDir = Join-Path $env:ProgramData 'Vantastrap'
 try {
 if (-not (Test-Path $__wdDir)) {
 New-Item -Path $__wdDir -ItemType Directory -Force | Out-Null
 }
 } catch {
-Write-ConsoleLog -Message ('Register-AlliumHostsWatchdog: cannot create ' + $__wdDir + ': ' + $_.Exception.Message) -Level 'ERROR'
+Write-ConsoleLog -Message ('Register-VantastrapHostsWatchdog: cannot create ' + $__wdDir + ': ' + $_.Exception.Message) -Level 'ERROR'
 return
 }
 $script:HttpsCleanupScriptPath = Join-Path $__wdDir 'watchdog-cleanup.ps1'
@@ -4205,10 +4205,10 @@ try {
     if (Test-Path `$hostsPath -PathType Leaf) {
         `$c = [System.IO.File]::ReadAllText(`$hostsPath)
         `$before = `$c.Length
-        `$s = [regex]::Replace(`$c, '(?s)\r?\n?# ==== BEGIN ALLIUM HOSTS ====.*?# ==== END ALLIUM HOSTS ====\r?\n?', '')
+        `$s = [regex]::Replace(`$c, '(?s)\r?\n?# ==== BEGIN Vantastrap HOSTS ====.*?# ==== END Vantastrap HOSTS ====\r?\n?', '')
         [System.IO.File]::WriteAllText(`$hostsPath, `$s)
         Wlog ('hosts stripped: ' + (`$before - `$s.Length) + ' bytes removed')
-        Remove-Item -LiteralPath (`$hostsPath + '.allium.bak') -Force -ErrorAction SilentlyContinue
+        Remove-Item -LiteralPath (`$hostsPath + '.Vantastrap.bak') -Force -ErrorAction SilentlyContinue
     }
     `$out = & schtasks.exe /Delete /F /TN `$taskName 2>&1 | Out-String
     Wlog ('schtasks delete: ' + `$out.Trim())
@@ -4229,7 +4229,7 @@ $__tr = "'$__pwshPath' -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -F
 $__createOut = & schtasks.exe /Create /F /TN $script:HttpsWatchdogTaskName /SC MINUTE /MO 1 /RU SYSTEM /RL HIGHEST /TR $__tr 2>&1 | Out-String
 $__createExit = $LASTEXITCODE
 if ($__createExit -ne 0) {
-Write-ConsoleLog -Message ('Register-AlliumHostsWatchdog: schtasks.exe /Create failed (exit ' + $__createExit + '): ' + $__createOut.Trim()) -Level 'ERROR'
+Write-ConsoleLog -Message ('Register-VantastrapHostsWatchdog: schtasks.exe /Create failed (exit ' + $__createExit + '): ' + $__createOut.Trim()) -Level 'ERROR'
 return
 }
 if ($null -ne $script:HttpsWatchdogRefreshTimer) {
@@ -4239,7 +4239,7 @@ $script:HttpsWatchdogRefreshTimer = $null
 $script:HttpsWatchdogRefreshTimer = New-Object System.Timers.Timer
 $script:HttpsWatchdogRefreshTimer.Interval = 5000
 $script:HttpsWatchdogRefreshTimer.AutoReset = $true
-Register-ObjectEvent -InputObject $script:HttpsWatchdogRefreshTimer -EventName Elapsed -SourceIdentifier 'AlliumHostsWatchdogHeartbeat' -MessageData $script:HttpsHeartbeatPath -Action {
+Register-ObjectEvent -InputObject $script:HttpsWatchdogRefreshTimer -EventName Elapsed -SourceIdentifier 'VantastrapHostsWatchdogHeartbeat' -MessageData $script:HttpsHeartbeatPath -Action {
 try {
 [System.IO.File]::WriteAllText($Event.MessageData, ([datetime]::UtcNow.Ticks).ToString())
 } catch {}
@@ -4247,14 +4247,14 @@ try {
 $script:HttpsWatchdogRefreshTimer.Start()
 Write-ConsoleLog -Message ('Hosts watchdog registered (task ' + $script:HttpsWatchdogTaskName + ', schtasks /SC MINUTE, heartbeat 5s at ' + $script:HttpsHeartbeatPath + ', log at ' + $__logPath + ').') -Level 'INFO'
 }
-function Unregister-AlliumHostsWatchdog {
+function Unregister-VantastrapHostsWatchdog {
 if ($null -ne $script:HttpsWatchdogRefreshTimer) {
 try { $script:HttpsWatchdogRefreshTimer.Stop() } catch {}
 try { $script:HttpsWatchdogRefreshTimer.Dispose() } catch {}
 $script:HttpsWatchdogRefreshTimer = $null
 }
-try { Unregister-Event -SourceIdentifier 'AlliumHostsWatchdogHeartbeat' -ErrorAction SilentlyContinue } catch {}
-try { Unregister-Event -SourceIdentifier 'AlliumHostsWatchdogRefresh' -ErrorAction SilentlyContinue } catch {}
+try { Unregister-Event -SourceIdentifier 'VantastrapHostsWatchdogHeartbeat' -ErrorAction SilentlyContinue } catch {}
+try { Unregister-Event -SourceIdentifier 'VantastrapHostsWatchdogRefresh' -ErrorAction SilentlyContinue } catch {}
 try { & schtasks.exe /Delete /F /TN $script:HttpsWatchdogTaskName 2>&1 | Out-Null } catch {}
 if (-not [string]::IsNullOrEmpty([string]$script:HttpsCleanupScriptPath)) {
 try { Remove-Item -LiteralPath $script:HttpsCleanupScriptPath -Force -ErrorAction SilentlyContinue } catch {}
@@ -4266,37 +4266,37 @@ $script:HttpsCleanupScriptPath = $null
 $script:HttpsHeartbeatPath = $null
 Write-ConsoleLog -Message 'Hosts watchdog unregistered.' -Level 'INFO'
 }
-function Install-AlliumProxyCA {
+function Install-VantastrapProxyCA {
 Ensure-HttpsInterceptDataDirs
 $cert = $null
 try {
 if (Test-Path $script:HttpsInterceptCaPfxFile -PathType Leaf) {
-$cert = [Allium.HttpsCaGenerator]::LoadPfx($script:HttpsInterceptCaPfxFile)
+$cert = [Vantastrap.HttpsCaGenerator]::LoadPfx($script:HttpsInterceptCaPfxFile)
 Write-ConsoleLog -Message 'HTTPS CA: loaded existing PFX' -Level 'INFO'
 } else {
-$cert = [Allium.HttpsCaGenerator]::GenerateRootCa(10)
-$pfxBytes = [Allium.HttpsCaGenerator]::ExportPfx($cert)
+$cert = [Vantastrap.HttpsCaGenerator]::GenerateRootCa(10)
+$pfxBytes = [Vantastrap.HttpsCaGenerator]::ExportPfx($cert)
 [System.IO.File]::WriteAllBytes($script:HttpsInterceptCaPfxFile, $pfxBytes)
-$pem = [Allium.HttpsCaGenerator]::ExportPem($cert)
+$pem = [Vantastrap.HttpsCaGenerator]::ExportPem($cert)
 [System.IO.File]::WriteAllText($script:HttpsInterceptCaPemFile, $pem)
-Write-ConsoleLog -Message ('HTTPS CA: generated new 10-year root CA (thumbprint ' + [Allium.HttpsCaGenerator]::FormatThumbprint($cert) + ')') -Level 'INFO'
+Write-ConsoleLog -Message ('HTTPS CA: generated new 10-year root CA (thumbprint ' + [Vantastrap.HttpsCaGenerator]::FormatThumbprint($cert) + ')') -Level 'INFO'
 }
 } catch {
-Write-ConsoleLog -Message ('Install-AlliumProxyCA: failed to load or generate CA: ' + $_.Exception.Message) -Level 'ERROR'
+Write-ConsoleLog -Message ('Install-VantastrapProxyCA: failed to load or generate CA: ' + $_.Exception.Message) -Level 'ERROR'
 return @{ Success = $false; Installed = 0; Skipped = 0; Failed = 0; Thumbprint = ""; Error = $_.Exception.Message }
 }
-$thumb = [Allium.HttpsCaGenerator]::FormatThumbprint($cert)
+$thumb = [Vantastrap.HttpsCaGenerator]::FormatThumbprint($cert)
 $pemText = $null
 try {
-$pemText = [Allium.HttpsCaGenerator]::ExportPem($cert)
+$pemText = [Vantastrap.HttpsCaGenerator]::ExportPem($cert)
 } catch {
-Write-ConsoleLog -Message ('Install-AlliumProxyCA: failed to encode PEM: ' + $_.Exception.Message) -Level 'ERROR'
+Write-ConsoleLog -Message ('Install-VantastrapProxyCA: failed to encode PEM: ' + $_.Exception.Message) -Level 'ERROR'
 return @{ Success = $false; Installed = 0; Skipped = 0; Failed = 0; Thumbprint = $thumb; Error = $_.Exception.Message }
 }
-$sentinelBegin = '# ==== BEGIN ALLIUM CA (thumbprint ' + $thumb + ') ===='
-$sentinelEnd = '# ==== END ALLIUM CA ===='
+$sentinelBegin = '# ==== BEGIN Vantastrap CA (thumbprint ' + $thumb + ') ===='
+$sentinelEnd = '# ==== END Vantastrap CA ===='
 $nowIso = ([datetime]::UtcNow).ToString("yyyy-MM-ddTHH:mm:ssZ")
-$block = "`n$sentinelBegin`n# Generated: $nowIso`n# Source:    Allium HTTPS Interception (Phase U1)`n$pemText$sentinelEnd`n"
+$block = "`n$sentinelBegin`n# Generated: $nowIso`n# Source:    Vantastrap HTTPS Interception (Phase U1)`n$pemText$sentinelEnd`n"
 $installs = @(Find-RobloxInstallations)
 $installed = 0
 $skipped = 0
@@ -4310,12 +4310,12 @@ continue
 }
 try {
 $existing = [System.IO.File]::ReadAllText($cacert)
-if ($existing.Contains('# ==== BEGIN ALLIUM CA')) {
+if ($existing.Contains('# ==== BEGIN Vantastrap CA')) {
 $skipped += 1
 Write-ConsoleLog -Message ('HTTPS CA: already installed in ' + $inst.Name) -Level 'INFO'
 continue
 }
-Backup-AlliumFileOnce -Path $cacert | Out-Null
+Backup-VantastrapFileOnce -Path $cacert | Out-Null
 [System.IO.File]::AppendAllText($cacert, $block)
 $installed += 1
 Write-ConsoleLog -Message ('HTTPS CA: installed into ' + $inst.Name) -Level 'INFO'
@@ -4341,12 +4341,12 @@ Thumbprint = $thumb
 Discovered = $installs.Count
 }
 }
-function Uninstall-AlliumProxyCA {
+function Uninstall-VantastrapProxyCA {
 $installs = @(Find-RobloxInstallations)
 $stripped = 0
 $restored = 0
 $failed = 0
-$sentinelPattern = '(?s)\r?\n?# ==== BEGIN ALLIUM CA[^\r\n]*\r?\n.*?# ==== END ALLIUM CA ====\r?\n?'
+$sentinelPattern = '(?s)\r?\n?# ==== BEGIN Vantastrap CA[^\r\n]*\r?\n.*?# ==== END Vantastrap CA ====\r?\n?'
 foreach ($inst in $installs) {
 $cacert = $inst.CacertPath
 if (-not (Test-Path $cacert -PathType Leaf)) {
@@ -4355,13 +4355,13 @@ continue
 }
 try {
 $existing = [System.IO.File]::ReadAllText($cacert)
-if ($existing.Contains('# ==== BEGIN ALLIUM CA')) {
+if ($existing.Contains('# ==== BEGIN Vantastrap CA')) {
 $rewritten = [regex]::Replace($existing, $sentinelPattern, '')
 [System.IO.File]::WriteAllText($cacert, $rewritten)
-try { Remove-Item -LiteralPath ($cacert + '.allium.bak') -Force -ErrorAction SilentlyContinue } catch {}
+try { Remove-Item -LiteralPath ($cacert + '.Vantastrap.bak') -Force -ErrorAction SilentlyContinue } catch {}
 $stripped += 1
 Write-ConsoleLog -Message ('HTTPS CA: stripped from ' + $inst.Name) -Level 'INFO'
-} elseif (Restore-AlliumBackup -Path $cacert) {
+} elseif (Restore-VantastrapBackup -Path $cacert) {
 $restored += 1
 Write-ConsoleLog -Message ('HTTPS CA: restored backup for ' + $inst.Name) -Level 'INFO'
 }
@@ -5286,21 +5286,21 @@ $script:TrayNotifyIcon = $null
 $script:TrayHwnd = [IntPtr]::Zero
 $script:TrayIconHandle = [IntPtr]::Zero
 $script:TrayClassAtom = 0
-$script:TrayClassName = "AlliumTrayClass_" + [System.Guid]::NewGuid().ToString("N")
+$script:TrayClassName = "VantastrapTrayClass_" + [System.Guid]::NewGuid().ToString("N")
 $script:TrayWndProcDelegate = $null
 $script:AutoReapplyTimer = $null
 $script:AutoReapplyEventJob = $null
 function Initialize-SystemTray {
 if ($null -ne $script:TrayNotifyIcon) { return }
-$hInstance = [Allium.Win32Tray]::GetModuleHandleW($null)
+$hInstance = [Vantastrap.Win32Tray]::GetModuleHandleW($null)
 $script:TrayIconHandle = [IntPtr]::Zero
 if (Test-Path $script:IconPath) {
 try {
 $iconAbs = (Resolve-Path $script:IconPath).Path
-$script:TrayIconHandle = [Allium.Win32Tray]::LoadImageW(
+$script:TrayIconHandle = [Vantastrap.Win32Tray]::LoadImageW(
 [IntPtr]::Zero, $iconAbs,
-[Allium.Win32Tray]::IMAGE_ICON, 0, 0,
-([Allium.Win32Tray]::LR_LOADFROMFILE -bor [Allium.Win32Tray]::LR_DEFAULTSIZE))
+[Vantastrap.Win32Tray]::IMAGE_ICON, 0, 0,
+([Vantastrap.Win32Tray]::LR_LOADFROMFILE -bor [Vantastrap.Win32Tray]::LR_DEFAULTSIZE))
 if ([IntPtr]::Zero -eq $script:TrayIconHandle) {
 Write-ConsoleLog -Message "Tray icon LoadImageW returned NULL; using default." -Level "WARN"
 }
@@ -5308,16 +5308,16 @@ Write-ConsoleLog -Message "Tray icon LoadImageW returned NULL; using default." -
 Write-ConsoleLog -Message "Tray icon load failed: $_" -Level "WARN"
 }
 }
-$script:TrayWndProcDelegate = [Allium.Win32Tray+WndProcDelegate]{
+$script:TrayWndProcDelegate = [Vantastrap.Win32Tray+WndProcDelegate]{
 param([IntPtr]$hwnd, [uint32]$msg, [IntPtr]$wp, [IntPtr]$lp)
 try {
-if ($msg -eq [Allium.Win32Tray]::WM_TRAYCALLBACK) {
+if ($msg -eq [Vantastrap.Win32Tray]::WM_TRAYCALLBACK) {
 $event = ($lp.ToInt64()) -band 0xFFFF
-if ($event -eq [Allium.Win32Tray]::NIN_SELECT -or $event -eq [Allium.Win32Tray]::NIN_KEYSELECT -or $event -eq [Allium.Win32Tray]::WM_LBUTTONUP) {
+if ($event -eq [Vantastrap.Win32Tray]::NIN_SELECT -or $event -eq [Vantastrap.Win32Tray]::NIN_KEYSELECT -or $event -eq [Vantastrap.Win32Tray]::WM_LBUTTONUP) {
 Invoke-TrayClickHandler -Kind 'Left' -WParam $wp
 return [IntPtr]::Zero
 }
-if ($event -eq [Allium.Win32Tray]::WM_CONTEXTMENU -or $event -eq [Allium.Win32Tray]::WM_RBUTTONUP) {
+if ($event -eq [Vantastrap.Win32Tray]::WM_CONTEXTMENU -or $event -eq [Vantastrap.Win32Tray]::WM_RBUTTONUP) {
 Invoke-TrayClickHandler -Kind 'Right' -WParam $wp
 return [IntPtr]::Zero
 }
@@ -5325,9 +5325,9 @@ return [IntPtr]::Zero
 } catch {
 try { Write-ConsoleLog -Message "Tray WndProc error: $_" -Level "ERROR" } catch {}
 }
-return [Allium.Win32Tray]::DefWindowProcW($hwnd, $msg, $wp, $lp)
+return [Vantastrap.Win32Tray]::DefWindowProcW($hwnd, $msg, $wp, $lp)
 }
-$wndClass = [Allium.Win32Tray+WNDCLASSW]::new()
+$wndClass = [Vantastrap.Win32Tray+WNDCLASSW]::new()
 $wndClass.style = 0
 $wndClass.lpfnWndProc = $script:TrayWndProcDelegate
 $wndClass.cbClsExtra = 0
@@ -5338,32 +5338,32 @@ $wndClass.hCursor = [IntPtr]::Zero
 $wndClass.hbrBackground = [IntPtr]::Zero
 $wndClass.lpszMenuName = $null
 $wndClass.lpszClassName = $script:TrayClassName
-$script:TrayClassAtom = [Allium.Win32Tray]::RegisterClassW([ref]$wndClass)
+$script:TrayClassAtom = [Vantastrap.Win32Tray]::RegisterClassW([ref]$wndClass)
 if (0 -eq $script:TrayClassAtom) {
 Write-ConsoleLog -Message "Tray RegisterClassW failed; aborting tray init." -Level "ERROR"
 $script:TrayWndProcDelegate = $null
 return
 }
-$script:TrayHwnd = [Allium.Win32Tray]::CreateWindowExW(
-0, $script:TrayClassName, "AlliumTrayMsgWnd", 0,
+$script:TrayHwnd = [Vantastrap.Win32Tray]::CreateWindowExW(
+0, $script:TrayClassName, "VantastrapTrayMsgWnd", 0,
 0, 0, 0, 0,
-[Allium.Win32Tray]::HWND_MESSAGE, [IntPtr]::Zero, $hInstance, [IntPtr]::Zero)
+[Vantastrap.Win32Tray]::HWND_MESSAGE, [IntPtr]::Zero, $hInstance, [IntPtr]::Zero)
 if ([IntPtr]::Zero -eq $script:TrayHwnd) {
 Write-ConsoleLog -Message "Tray CreateWindowExW failed; aborting tray init." -Level "ERROR"
-[void][Allium.Win32Tray]::UnregisterClassW($script:TrayClassName, $hInstance)
+[void][Vantastrap.Win32Tray]::UnregisterClassW($script:TrayClassName, $hInstance)
 $script:TrayClassAtom = 0
 $script:TrayWndProcDelegate = $null
 return
 }
 Enable-TrayDarkMode -Hwnd $script:TrayHwnd
-$nid = [Allium.Win32Tray+NOTIFYICONDATAW]::new()
-$nid.cbSize = [System.Runtime.InteropServices.Marshal]::SizeOf([type][Allium.Win32Tray+NOTIFYICONDATAW])
+$nid = [Vantastrap.Win32Tray+NOTIFYICONDATAW]::new()
+$nid.cbSize = [System.Runtime.InteropServices.Marshal]::SizeOf([type][Vantastrap.Win32Tray+NOTIFYICONDATAW])
 $nid.hWnd = $script:TrayHwnd
 $nid.uID = 1
-$nid.uFlags = ([Allium.Win32Tray]::NIF_MESSAGE -bor [Allium.Win32Tray]::NIF_ICON -bor [Allium.Win32Tray]::NIF_TIP -bor [Allium.Win32Tray]::NIF_SHOWTIP)
-$nid.uCallbackMessage = [Allium.Win32Tray]::WM_TRAYCALLBACK
+$nid.uFlags = ([Vantastrap.Win32Tray]::NIF_MESSAGE -bor [Vantastrap.Win32Tray]::NIF_ICON -bor [Vantastrap.Win32Tray]::NIF_TIP -bor [Vantastrap.Win32Tray]::NIF_SHOWTIP)
+$nid.uCallbackMessage = [Vantastrap.Win32Tray]::WM_TRAYCALLBACK
 $nid.hIcon = $script:TrayIconHandle
-$nid.szTip = "Allium - FFlag Engine"
+$nid.szTip = "Vantastrap - FFlag Engine"
 $nid.dwState = 0
 $nid.dwStateMask = 0
 $nid.szInfo = ""
@@ -5372,18 +5372,18 @@ $nid.szInfoTitle = ""
 $nid.dwInfoFlags = 0
 $nid.guidItem = [System.Guid]::Empty
 $nid.hBalloonIcon = [IntPtr]::Zero
-$added = [Allium.Win32Tray]::Shell_NotifyIconW([Allium.Win32Tray]::NIM_ADD, [ref]$nid)
+$added = [Vantastrap.Win32Tray]::Shell_NotifyIconW([Vantastrap.Win32Tray]::NIM_ADD, [ref]$nid)
 if (-not $added) {
 Write-ConsoleLog -Message "Tray Shell_NotifyIcon(NIM_ADD) failed; rolling back." -Level "ERROR"
-[void][Allium.Win32Tray]::DestroyWindow($script:TrayHwnd)
-[void][Allium.Win32Tray]::UnregisterClassW($script:TrayClassName, $hInstance)
+[void][Vantastrap.Win32Tray]::DestroyWindow($script:TrayHwnd)
+[void][Vantastrap.Win32Tray]::UnregisterClassW($script:TrayClassName, $hInstance)
 $script:TrayHwnd = [IntPtr]::Zero
 $script:TrayClassAtom = 0
 $script:TrayWndProcDelegate = $null
 return
 }
-$nid.uVersion = [Allium.Win32Tray]::NOTIFYICON_VERSION_4
-$verOk = [Allium.Win32Tray]::Shell_NotifyIconW([Allium.Win32Tray]::NIM_SETVERSION, [ref]$nid)
+$nid.uVersion = [Vantastrap.Win32Tray]::NOTIFYICON_VERSION_4
+$verOk = [Vantastrap.Win32Tray]::Shell_NotifyIconW([Vantastrap.Win32Tray]::NIM_SETVERSION, [ref]$nid)
 if (-not $verOk) {
 Write-ConsoleLog -Message "Tray NIM_SETVERSION failed (non-fatal)." -Level "WARN"
 }
@@ -5398,29 +5398,29 @@ Write-ConsoleLog -Message "System tray icon initialized." -Level "INFO"
 }
 function Show-TrayIcon {
 if ($null -eq $script:TrayNotifyIcon) { return }
-$nid = [Allium.Win32Tray+NOTIFYICONDATAW]::new()
-$nid.cbSize = [System.Runtime.InteropServices.Marshal]::SizeOf([type][Allium.Win32Tray+NOTIFYICONDATAW])
+$nid = [Vantastrap.Win32Tray+NOTIFYICONDATAW]::new()
+$nid.cbSize = [System.Runtime.InteropServices.Marshal]::SizeOf([type][Vantastrap.Win32Tray+NOTIFYICONDATAW])
 $nid.hWnd = $script:TrayHwnd
 $nid.uID = 1
-$nid.uFlags = [Allium.Win32Tray]::NIF_STATE
+$nid.uFlags = [Vantastrap.Win32Tray]::NIF_STATE
 $nid.dwState = 0
-$nid.dwStateMask = [Allium.Win32Tray]::NIS_HIDDEN
-[void][Allium.Win32Tray]::Shell_NotifyIconW([Allium.Win32Tray]::NIM_MODIFY, [ref]$nid)
+$nid.dwStateMask = [Vantastrap.Win32Tray]::NIS_HIDDEN
+[void][Vantastrap.Win32Tray]::Shell_NotifyIconW([Vantastrap.Win32Tray]::NIM_MODIFY, [ref]$nid)
 $script:TrayNotifyIcon.Visible = $true
 }
 function Hide-TrayIcon {
 if ($null -eq $script:TrayNotifyIcon) { return }
-$nid = [Allium.Win32Tray+NOTIFYICONDATAW]::new()
-$nid.cbSize = [System.Runtime.InteropServices.Marshal]::SizeOf([type][Allium.Win32Tray+NOTIFYICONDATAW])
+$nid = [Vantastrap.Win32Tray+NOTIFYICONDATAW]::new()
+$nid.cbSize = [System.Runtime.InteropServices.Marshal]::SizeOf([type][Vantastrap.Win32Tray+NOTIFYICONDATAW])
 $nid.hWnd = $script:TrayHwnd
 $nid.uID = 1
-$nid.uFlags = [Allium.Win32Tray]::NIF_STATE
-$nid.dwState = [Allium.Win32Tray]::NIS_HIDDEN
-$nid.dwStateMask = [Allium.Win32Tray]::NIS_HIDDEN
-[void][Allium.Win32Tray]::Shell_NotifyIconW([Allium.Win32Tray]::NIM_MODIFY, [ref]$nid)
+$nid.uFlags = [Vantastrap.Win32Tray]::NIF_STATE
+$nid.dwState = [Vantastrap.Win32Tray]::NIS_HIDDEN
+$nid.dwStateMask = [Vantastrap.Win32Tray]::NIS_HIDDEN
+[void][Vantastrap.Win32Tray]::Shell_NotifyIconW([Vantastrap.Win32Tray]::NIM_MODIFY, [ref]$nid)
 $script:TrayNotifyIcon.Visible = $false
 }
-function Restore-AlliumFromTray {
+function Restore-VantastrapFromTray {
 try {
 if ($null -ne $script:EditorWindow) {
 $script:EditorWindow.AppWindow.Show()
@@ -5434,16 +5434,16 @@ Hide-TrayIcon
 }
 function Remove-SystemTray {
 if ($null -eq $script:TrayNotifyIcon) { return }
-$nid = [Allium.Win32Tray+NOTIFYICONDATAW]::new()
-$nid.cbSize = [System.Runtime.InteropServices.Marshal]::SizeOf([type][Allium.Win32Tray+NOTIFYICONDATAW])
+$nid = [Vantastrap.Win32Tray+NOTIFYICONDATAW]::new()
+$nid.cbSize = [System.Runtime.InteropServices.Marshal]::SizeOf([type][Vantastrap.Win32Tray+NOTIFYICONDATAW])
 $nid.hWnd = $script:TrayHwnd
 $nid.uID = 1
-[void][Allium.Win32Tray]::Shell_NotifyIconW([Allium.Win32Tray]::NIM_DELETE, [ref]$nid)
+[void][Vantastrap.Win32Tray]::Shell_NotifyIconW([Vantastrap.Win32Tray]::NIM_DELETE, [ref]$nid)
 if ([IntPtr]::Zero -ne $script:TrayHwnd) {
-[void][Allium.Win32Tray]::DestroyWindow($script:TrayHwnd)
+[void][Vantastrap.Win32Tray]::DestroyWindow($script:TrayHwnd)
 }
-$hInstance = [Allium.Win32Tray]::GetModuleHandleW($null)
-[void][Allium.Win32Tray]::UnregisterClassW($script:TrayClassName, $hInstance)
+$hInstance = [Vantastrap.Win32Tray]::GetModuleHandleW($null)
+[void][Vantastrap.Win32Tray]::UnregisterClassW($script:TrayClassName, $hInstance)
 $script:TrayHwnd = [IntPtr]::Zero
 $script:TrayIconHandle = [IntPtr]::Zero
 $script:TrayClassAtom = 0
@@ -5452,18 +5452,18 @@ $script:TrayWndProcDelegate = $null
 }
 function Process-TrayMessages {
 if ([IntPtr]::Zero -eq $script:TrayHwnd) { return }
-$msg = [Allium.Win32Tray+MSG]::new()
+$msg = [Vantastrap.Win32Tray+MSG]::new()
 $drained = 0
-while ($drained -lt 5 -and [Allium.Win32Tray]::PeekMessageW([ref]$msg, $script:TrayHwnd, 0, 0, [Allium.Win32Tray]::PM_REMOVE)) {
-[void][Allium.Win32Tray]::TranslateMessage([ref]$msg)
-[void][Allium.Win32Tray]::DispatchMessageW([ref]$msg)
+while ($drained -lt 5 -and [Vantastrap.Win32Tray]::PeekMessageW([ref]$msg, $script:TrayHwnd, 0, 0, [Vantastrap.Win32Tray]::PM_REMOVE)) {
+[void][Vantastrap.Win32Tray]::TranslateMessage([ref]$msg)
+[void][Vantastrap.Win32Tray]::DispatchMessageW([ref]$msg)
 $drained++
 }
 }
 function Enable-TrayDarkMode {
 param([Parameter(Mandatory)] [IntPtr]$Hwnd)
 $build = [System.Environment]::OSVersion.Version.Build
-if ($build -lt [Allium.Win32Tray]::WIN_BUILD_MIN_DARK) {
+if ($build -lt [Vantastrap.Win32Tray]::WIN_BUILD_MIN_DARK) {
 Write-ConsoleLog -Message "Tray dark mode skipped: Windows build $build < 18362 (1903)." -Level "INFO"
 return
 }
@@ -5472,11 +5472,11 @@ Write-ConsoleLog -Message "Tray dark mode skipped: null Hwnd." -Level "WARN"
 return
 }
 try {
-[void][Allium.Win32Tray]::SetPreferredAppMode([Allium.Win32Tray]::PREFERRED_APP_MODE_FORCE_DARK)
-[void][Allium.Win32Tray]::AllowDarkModeForWindow($Hwnd, $true)
-[void][Allium.Win32Tray]::SetWindowTheme($Hwnd, "DarkMode_Explorer", $null)
-[Allium.Win32Tray]::FlushMenuThemes()
-[Allium.Win32Tray]::RefreshImmersiveColorPolicyState()
+[void][Vantastrap.Win32Tray]::SetPreferredAppMode([Vantastrap.Win32Tray]::PREFERRED_APP_MODE_FORCE_DARK)
+[void][Vantastrap.Win32Tray]::AllowDarkModeForWindow($Hwnd, $true)
+[void][Vantastrap.Win32Tray]::SetWindowTheme($Hwnd, "DarkMode_Explorer", $null)
+[Vantastrap.Win32Tray]::FlushMenuThemes()
+[Vantastrap.Win32Tray]::RefreshImmersiveColorPolicyState()
 Write-ConsoleLog -Message "Tray dark mode enabled." -Level "INFO"
 } catch {
 Write-ConsoleLog -Message "Tray dark mode failed (non-fatal, menu will use system default): $_" -Level "WARN"
@@ -5489,7 +5489,7 @@ param(
 )
 try {
 if ($Kind -eq 'Left') {
-Restore-AlliumFromTray
+Restore-VantastrapFromTray
 return
 }
 if ($Kind -eq 'Right') {
@@ -5511,28 +5511,28 @@ param(
 [Parameter(Mandatory)] [int]$Y
 )
 if ([IntPtr]::Zero -eq $script:TrayHwnd) { return }
-$hMenu = [Allium.Win32Tray]::CreatePopupMenu()
+$hMenu = [Vantastrap.Win32Tray]::CreatePopupMenu()
 if ([IntPtr]::Zero -eq $hMenu) {
 Write-ConsoleLog -Message "CreatePopupMenu failed." -Level "ERROR"
 return
 }
 $cmd = 0
 try {
-[void][Allium.Win32Tray]::AppendMenuW($hMenu, [Allium.Win32Tray]::MF_STRING, [UIntPtr]::new(0x1001), "Open Allium")
-[void][Allium.Win32Tray]::AppendMenuW($hMenu, [Allium.Win32Tray]::MF_STRING, [UIntPtr]::new(0x1002), "Reapply FFlags Now")
-[void][Allium.Win32Tray]::AppendMenuW($hMenu, [Allium.Win32Tray]::MF_SEPARATOR, [UIntPtr]::new(0), $null)
-[void][Allium.Win32Tray]::AppendMenuW($hMenu, [Allium.Win32Tray]::MF_STRING, [UIntPtr]::new(0x1003), "Exit Allium")
-[void][Allium.Win32Tray]::SetForegroundWindow($script:TrayHwnd)
-$flags = [Allium.Win32Tray]::TPM_RIGHTBUTTON -bor [Allium.Win32Tray]::TPM_RETURNCMD -bor [Allium.Win32Tray]::TPM_NONOTIFY -bor [Allium.Win32Tray]::TPM_BOTTOMALIGN
-$cmd = [Allium.Win32Tray]::TrackPopupMenu($hMenu, $flags, $X, $Y, 0, $script:TrayHwnd, [IntPtr]::Zero)
-[void][Allium.Win32Tray]::PostMessageW($script:TrayHwnd, [Allium.Win32Tray]::WM_NULL, [IntPtr]::Zero, [IntPtr]::Zero)
+[void][Vantastrap.Win32Tray]::AppendMenuW($hMenu, [Vantastrap.Win32Tray]::MF_STRING, [UIntPtr]::new(0x1001), "Open Vantastrap")
+[void][Vantastrap.Win32Tray]::AppendMenuW($hMenu, [Vantastrap.Win32Tray]::MF_STRING, [UIntPtr]::new(0x1002), "Reapply FFlags Now")
+[void][Vantastrap.Win32Tray]::AppendMenuW($hMenu, [Vantastrap.Win32Tray]::MF_SEPARATOR, [UIntPtr]::new(0), $null)
+[void][Vantastrap.Win32Tray]::AppendMenuW($hMenu, [Vantastrap.Win32Tray]::MF_STRING, [UIntPtr]::new(0x1003), "Exit Vantastrap")
+[void][Vantastrap.Win32Tray]::SetForegroundWindow($script:TrayHwnd)
+$flags = [Vantastrap.Win32Tray]::TPM_RIGHTBUTTON -bor [Vantastrap.Win32Tray]::TPM_RETURNCMD -bor [Vantastrap.Win32Tray]::TPM_NONOTIFY -bor [Vantastrap.Win32Tray]::TPM_BOTTOMALIGN
+$cmd = [Vantastrap.Win32Tray]::TrackPopupMenu($hMenu, $flags, $X, $Y, 0, $script:TrayHwnd, [IntPtr]::Zero)
+[void][Vantastrap.Win32Tray]::PostMessageW($script:TrayHwnd, [Vantastrap.Win32Tray]::WM_NULL, [IntPtr]::Zero, [IntPtr]::Zero)
 } finally {
-[void][Allium.Win32Tray]::DestroyMenu($hMenu)
+[void][Vantastrap.Win32Tray]::DestroyMenu($hMenu)
 }
 switch ($cmd) {
 0x1001 {
-try { Restore-AlliumFromTray }
-catch { Write-ConsoleLog -Message "Tray 'Open Allium' failed: $_" -Level "ERROR" }
+try { Restore-VantastrapFromTray }
+catch { Write-ConsoleLog -Message "Tray 'Open Vantastrap' failed: $_" -Level "ERROR" }
 }
 0x1002 {
 try {
@@ -5545,8 +5545,8 @@ Write-ConsoleLog -Message "Reapply from tray returned false (no settings path?).
 } catch { Write-ConsoleLog -Message "Reapply from tray failed: $_" -Level "ERROR" }
 }
 0x1003 {
-try { Exit-Allium }
-catch { Write-ConsoleLog -Message "Tray 'Exit Allium' failed: $_" -Level "ERROR" }
+try { Exit-Vantastrap }
+catch { Write-ConsoleLog -Message "Tray 'Exit Vantastrap' failed: $_" -Level "ERROR" }
 }
 default { }
 }
@@ -5590,7 +5590,7 @@ $script:AutoReapplyEventJob | Stop-Job -PassThru | Remove-Job -Force
 $script:AutoReapplyEventJob = $null
 }
 }
-function Exit-Allium {
+function Exit-Vantastrap {
 Stop-Watchdog
 Stop-AutoReapplyTimer
 Remove-SystemTray
@@ -5806,10 +5806,10 @@ return $false
 function Process-KeyboardPolling {
 if ($script:EditorHwnd -eq [System.IntPtr]::Zero) {
 $title = "$($script:AppTitle) - FFlag Editor"
-$script:EditorHwnd = [Allium.KbdState]::FindWindowW([System.IntPtr]::Zero, $title)
+$script:EditorHwnd = [Vantastrap.KbdState]::FindWindowW([System.IntPtr]::Zero, $title)
 }
 if ($script:EditorHwnd -ne [System.IntPtr]::Zero) {
-if ([Allium.KbdState]::GetForegroundWindow() -ne $script:EditorHwnd) { return }
+if ([Vantastrap.KbdState]::GetForegroundWindow() -ne $script:EditorHwnd) { return }
 }
 if (-not $script:KbdEditorActive) { return }
 $script:KbdFocusCheckCounter++
@@ -5822,7 +5822,7 @@ if (-not (Test-TextInputFocused)) {
 $script:KbdTextFocused = $false
 $script:KbdFocusCheckCounter = 0
 } else {
-$escNow = ([Allium.KbdState]::GetAsyncKeyState(0x1B) -band 0x8000) -ne 0
+$escNow = ([Vantastrap.KbdState]::GetAsyncKeyState(0x1B) -band 0x8000) -ne 0
 if ($escNow -and -not $script:KbdLastEsc) {
 Write-ConsoleLog -Message "KBD: Escape (unfocus)" -Level "INFO"
 try {
@@ -5839,16 +5839,16 @@ return
 }
 }
 try {
-$ctrl = ([Allium.KbdState]::GetAsyncKeyState(0x11) -band 0x8000) -ne 0
+$ctrl = ([Vantastrap.KbdState]::GetAsyncKeyState(0x11) -band 0x8000) -ne 0
 if ($ctrl) {
 $script:KbdCtrlUp = 0
-$czNow = ([Allium.KbdState]::GetAsyncKeyState(0x5A) -band 0x8000) -ne 0
+$czNow = ([Vantastrap.KbdState]::GetAsyncKeyState(0x5A) -band 0x8000) -ne 0
 if ($czNow -and -not $script:KbdLastCtrlZ) { Write-ConsoleLog -Message "KBD: Ctrl+Z" -Level "INFO"; if (Invoke-Undo) { Save-Flags; Editor-RefreshFlagList } }
 $script:KbdLastCtrlZ = $czNow
-$cyNow = ([Allium.KbdState]::GetAsyncKeyState(0x59) -band 0x8000) -ne 0
+$cyNow = ([Vantastrap.KbdState]::GetAsyncKeyState(0x59) -band 0x8000) -ne 0
 if ($cyNow -and -not $script:KbdLastCtrlY) { Write-ConsoleLog -Message "KBD: Ctrl+Y" -Level "INFO"; if (Invoke-Redo) { Save-Flags; Editor-RefreshFlagList } }
 $script:KbdLastCtrlY = $cyNow
-$cfNow = ([Allium.KbdState]::GetAsyncKeyState(0x46) -band 0x8000) -ne 0
+$cfNow = ([Vantastrap.KbdState]::GetAsyncKeyState(0x46) -band 0x8000) -ne 0
 if ($cfNow -and -not $script:KbdLastCtrlF) {
 Write-ConsoleLog -Message "KBD: Ctrl+F" -Level "INFO"
 if ($null -ne $script:EditorSearchBox) {
@@ -5857,7 +5857,7 @@ catch { try { $script:EditorSearchBox.Focus() } catch {} }
 }
 }
 $script:KbdLastCtrlF = $cfNow
-$ccNow = ([Allium.KbdState]::GetAsyncKeyState(0x43) -band 0x8000) -ne 0
+$ccNow = ([Vantastrap.KbdState]::GetAsyncKeyState(0x43) -band 0x8000) -ne 0
 if ($ccNow -and -not $script:KbdLastCtrlC) {
 $consoleCopied = $false
 $hasSelection = $false
@@ -5880,27 +5880,27 @@ Editor-CopySelectedAsJson
 }
 }
 $script:KbdLastCtrlC = $ccNow
-$cvNow = ([Allium.KbdState]::GetAsyncKeyState(0x56) -band 0x8000) -ne 0
+$cvNow = ([Vantastrap.KbdState]::GetAsyncKeyState(0x56) -band 0x8000) -ne 0
 if ($cvNow -and -not $script:KbdLastCtrlV) { Write-ConsoleLog -Message "KBD: Ctrl+V" -Level "INFO"; Editor-PasteJson }
 $script:KbdLastCtrlV = $cvNow
-$ceNow = ([Allium.KbdState]::GetAsyncKeyState(0x45) -band 0x8000) -ne 0
+$ceNow = ([Vantastrap.KbdState]::GetAsyncKeyState(0x45) -band 0x8000) -ne 0
 if ($ceNow -and -not $script:KbdLastCtrlE) { Write-ConsoleLog -Message "KBD: Ctrl+E" -Level "INFO"; Editor-BatchEditSelected }
 $script:KbdLastCtrlE = $ceNow
 } else {
 $script:KbdCtrlUp++
-if (([Allium.KbdState]::GetAsyncKeyState(0x5A) -band 0x8000) -eq 0) { $script:KbdLastCtrlZ = $false }
-if (([Allium.KbdState]::GetAsyncKeyState(0x59) -band 0x8000) -eq 0) { $script:KbdLastCtrlY = $false }
-if (([Allium.KbdState]::GetAsyncKeyState(0x46) -band 0x8000) -eq 0) { $script:KbdLastCtrlF = $false }
-if (([Allium.KbdState]::GetAsyncKeyState(0x43) -band 0x8000) -eq 0) { $script:KbdLastCtrlC = $false }
-if (([Allium.KbdState]::GetAsyncKeyState(0x56) -band 0x8000) -eq 0) { $script:KbdLastCtrlV = $false }
-if (([Allium.KbdState]::GetAsyncKeyState(0x45) -band 0x8000) -eq 0) { $script:KbdLastCtrlE = $false }
-$delNow = ([Allium.KbdState]::GetAsyncKeyState(0x2E) -band 0x8000) -ne 0
+if (([Vantastrap.KbdState]::GetAsyncKeyState(0x5A) -band 0x8000) -eq 0) { $script:KbdLastCtrlZ = $false }
+if (([Vantastrap.KbdState]::GetAsyncKeyState(0x59) -band 0x8000) -eq 0) { $script:KbdLastCtrlY = $false }
+if (([Vantastrap.KbdState]::GetAsyncKeyState(0x46) -band 0x8000) -eq 0) { $script:KbdLastCtrlF = $false }
+if (([Vantastrap.KbdState]::GetAsyncKeyState(0x43) -band 0x8000) -eq 0) { $script:KbdLastCtrlC = $false }
+if (([Vantastrap.KbdState]::GetAsyncKeyState(0x56) -band 0x8000) -eq 0) { $script:KbdLastCtrlV = $false }
+if (([Vantastrap.KbdState]::GetAsyncKeyState(0x45) -band 0x8000) -eq 0) { $script:KbdLastCtrlE = $false }
+$delNow = ([Vantastrap.KbdState]::GetAsyncKeyState(0x2E) -band 0x8000) -ne 0
 if ($delNow -and -not $script:KbdLastDel) { Write-ConsoleLog -Message "KBD: Delete" -Level "INFO"; Editor-DeleteSelected }
 $script:KbdLastDel = $delNow
-$escNow = ([Allium.KbdState]::GetAsyncKeyState(0x1B) -band 0x8000) -ne 0
+$escNow = ([Vantastrap.KbdState]::GetAsyncKeyState(0x1B) -band 0x8000) -ne 0
 if ($escNow -and -not $script:KbdLastEsc) { Write-ConsoleLog -Message "KBD: Escape" -Level "INFO"; Editor-DeselectAll }
 $script:KbdLastEsc = $escNow
-$enterNow = ([Allium.KbdState]::GetAsyncKeyState(0x0D) -band 0x8000) -ne 0
+$enterNow = ([Vantastrap.KbdState]::GetAsyncKeyState(0x0D) -band 0x8000) -ne 0
 if ($enterNow -and -not $script:KbdLastEnter) { Write-ConsoleLog -Message "KBD: Enter" -Level "INFO"; Editor-EditSelected }
 $script:KbdLastEnter = $enterNow
 }
@@ -6215,7 +6215,7 @@ $dt.Start()
 function Show-LaunchStatusPopup {
 param([string]$Message)
 $win = [WinUIShell.Microsoft.UI.Xaml.Window]::new()
-$win.Title = "Allium - Launching"
+$win.Title = "Vantastrap - Launching"
 $win.ExtendsContentIntoTitleBar = $true
 try {
 $win.AppWindow.Resize(320, 180)
@@ -6369,7 +6369,7 @@ return
 }
 try {
 $jsonNames = $names | ConvertTo-Json -Compress
-$e.Data.Properties["AlliumFFlagNames"] = $jsonNames
+$e.Data.Properties["VantastrapFFlagNames"] = $jsonNames
 } catch {
 try { Write-ConsoleLog -Message "Drag Properties write failed (will use carrier): $_" -Level "WARN" } catch {}
 }
@@ -6792,13 +6792,13 @@ $fetchPowerShell = [powershell]::Create()
 $fetchPowerShell.Runspace = $fetchRunspace
 $scriptRef = $script:FlagBrowserCache
 $errorRef = ""
-$gasBody = ${function:Get-AlliumFlagSources}.ToString()
+$gasBody = ${function:Get-VantastrapFlagSources}.ToString()
 $fetchRunspace.SessionStateProxy.SetVariable('GasFunctionBody', $gasBody)
 [void]$fetchPowerShell.AddScript({
 try { [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor [System.Net.SecurityProtocolType]::Tls12 } catch {}
-${function:Get-AlliumFlagSources} = $GasFunctionBody
+${function:Get-VantastrapFlagSources} = $GasFunctionBody
 try {
-$result = Get-AlliumFlagSources
+$result = Get-VantastrapFlagSources
 return $result
 } catch {
 return @(@{}, "Fetch runspace failure: $($_.Exception.Message)")
@@ -6842,7 +6842,7 @@ Browser-OnFetchComplete
 }.GetNewClosure())
 $checkTimer.Start()
 }
-function Get-AlliumFlagSources {
+function Get-VantastrapFlagSources {
 $errorMsg = ""
 $cache = @{}
 $browserUA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
@@ -7343,7 +7343,7 @@ return
 }
 try {
 $jsonNames = $names | ConvertTo-Json -Compress
-$e.Data.Properties["AlliumFFlagNames"] = $jsonNames
+$e.Data.Properties["VantastrapFFlagNames"] = $jsonNames
 } catch {
 try { Write-ConsoleLog -Message "Drag Properties write failed (will use carrier): $_" -Level "WARN" } catch {}
 }
@@ -7703,7 +7703,7 @@ $titleRegion.Background = [WinUIShell.Microsoft.UI.Xaml.Media.SolidColorBrush]::
 $titleStack = [WinUIShell.Microsoft.UI.Xaml.Controls.StackPanel]::new()
 $titleStack.Spacing = 2
 $titleText = [WinUIShell.Microsoft.UI.Xaml.Controls.TextBlock]::new()
-$titleText.Text = "Allium Editor"
+$titleText.Text = "Vantastrap Editor"
 Set-SafeFontFamily -Target $titleText -Family $script:AppFontFamily
 $titleText.FontSize = 20
 $titleText.FontWeight = [WinUIShell.Microsoft.UI.Text.FontWeights]::Bold
@@ -8348,7 +8348,7 @@ return $memStats
 $cacheHasEntries = ($null -ne $script:LastFvmDump) -and ($script:LastFvmDump.Flags -is [hashtable]) -and ($script:LastFvmDump.Flags.Count -gt 0)
 if (-not $cacheHasEntries) {
 Write-ConsoleLog -Message 'Apply: no local dump found. Priming fvm cache from external offsets (imtheo)...' -Level 'INFO'
-$primeResult = Initialize-AlliumFvmFromExternalOffsets
+$primeResult = Initialize-VantastrapFvmFromExternalOffsets
 if ($primeResult.Success) {
 Write-ConsoleLog -Message ('External offsets primed: ' + $primeResult.EntryCount + ' flags (Version=' + $primeResult.Version + ')') -Level 'INFO'
 $memStats.WasCache = 'External'
@@ -8374,7 +8374,7 @@ try { $__debugBuf = [System.Collections.Generic.List[string]]::new() }
 catch { $__debugBuf = $null }
 }
 $__batchResults = @{}
-try { $__batchResults = Set-AlliumFlagValueBatch -Flags $script:Flags } catch { $__batchResults = @{} }
+try { $__batchResults = Set-VantastrapFlagValueBatch -Flags $script:Flags } catch { $__batchResults = @{} }
 $__knownFlagSet = @{}
 $__canValidate = $false
 $__addKnown = {
@@ -8416,7 +8416,7 @@ $wrExc = $null
 if ($__batchResults.ContainsKey($name)) {
 $wr = $__batchResults[$name]
 } else {
-try { $wr = Set-AlliumFlagValue -Name $name -Value $val -Force -Quiet } catch { $wr = $null; $wrExc = $_.Exception.Message }
+try { $wr = Set-VantastrapFlagValue -Name $name -Value $val -Force -Quiet } catch { $wr = $null; $wrExc = $_.Exception.Message }
 }
 $branch = ''
 if ($null -eq $wr) {
@@ -8498,7 +8498,7 @@ try { $xr = $s.XamlRoot } catch { }
 if ($null -eq $xr) { try { $xr = $script:EditorWindow.Content.XamlRoot } catch { } }
 $script:LastApplyResult = $null
 $script:LastApplyJsonOk = $false
-Invoke-AlliumDumperAsync -Title 'Applying FFlags' -Message 'Saving and applying your changes...' -XamlRoot $xr -Work {
+Invoke-VantastrapDumperAsync -Title 'Applying FFlags' -Message 'Saving and applying your changes...' -XamlRoot $xr -Work {
 Save-Flags
 $script:LastApplyJsonOk = Write-ClientAppSettings
 if ($null -eq $script:LastFvmDump -or -not ($script:LastFvmDump.Flags -is [hashtable]) -or $script:LastFvmDump.Flags.Count -eq 0) {
@@ -8594,7 +8594,7 @@ Start-Sleep -Milliseconds 500
 }
 $script:LastApplyResult = $null
 $script:LastApplyJsonOk = $false
-Invoke-AlliumDumperAsync -Title 'Save and Launch' -Message 'Writing FFlags, then launching Roblox...' -XamlRoot $xr -Work {
+Invoke-VantastrapDumperAsync -Title 'Save and Launch' -Message 'Writing FFlags, then launching Roblox...' -XamlRoot $xr -Work {
 Save-Flags
 $script:LastApplyJsonOk = Write-ClientAppSettings
 if ($null -eq $script:LastFvmDump -or -not ($script:LastFvmDump.Flags -is [hashtable]) -or $script:LastFvmDump.Flags.Count -eq 0) {
@@ -8690,7 +8690,7 @@ param($argumentList, $s, $e)
 try {
 $names = $null
 try {
-$raw = $e.DataView.Properties["AlliumFFlagNames"]
+$raw = $e.DataView.Properties["VantastrapFFlagNames"]
 if (-not [string]::IsNullOrWhiteSpace($raw)) {
 $names = $raw | ConvertFrom-Json
 }
@@ -9391,15 +9391,15 @@ $owner.Opacity = 0
 $owner.Show()
 [System.Windows.Forms.Application]::DoEvents()
 try {
-[Allium.DialogFocus]::keybd_event(0x12, 0, 0, [UIntPtr]::Zero)
-[Allium.DialogFocus]::keybd_event(0x12, 0, 2, [UIntPtr]::Zero)
+[Vantastrap.DialogFocus]::keybd_event(0x12, 0, 0, [UIntPtr]::Zero)
+[Vantastrap.DialogFocus]::keybd_event(0x12, 0, 2, [UIntPtr]::Zero)
 } catch {}
 $owner.Activate()
 $owner.BringToFront()
 try {
 $SWP_NOMOVE = 0x0002; $SWP_NOSIZE = 0x0001; $swpFlags = $SWP_NOMOVE -bor $SWP_NOSIZE
-[void][Allium.DialogFocus]::SetWindowPos($owner.Handle, [IntPtr]::new(-1), 0, 0, 0, 0, $swpFlags)
-[void][Allium.DialogFocus]::SetWindowPos($owner.Handle, [IntPtr]::new(-2), 0, 0, 0, 0, $swpFlags)
+[void][Vantastrap.DialogFocus]::SetWindowPos($owner.Handle, [IntPtr]::new(-1), 0, 0, 0, 0, $swpFlags)
+[void][Vantastrap.DialogFocus]::SetWindowPos($owner.Handle, [IntPtr]::new(-2), 0, 0, 0, 0, $swpFlags)
 } catch {}
 [System.Windows.Forms.Application]::DoEvents()
 $ofd = [System.Windows.Forms.OpenFileDialog]::new()
@@ -9654,15 +9654,15 @@ $owner.Opacity = 0
 $owner.Show()
 [System.Windows.Forms.Application]::DoEvents()
 try {
-[Allium.DialogFocus]::keybd_event(0x12, 0, 0, [UIntPtr]::Zero)
-[Allium.DialogFocus]::keybd_event(0x12, 0, 2, [UIntPtr]::Zero)
+[Vantastrap.DialogFocus]::keybd_event(0x12, 0, 0, [UIntPtr]::Zero)
+[Vantastrap.DialogFocus]::keybd_event(0x12, 0, 2, [UIntPtr]::Zero)
 } catch {}
 $owner.Activate()
 $owner.BringToFront()
 try {
 $SWP_NOMOVE = 0x0002; $SWP_NOSIZE = 0x0001; $swpFlags = $SWP_NOMOVE -bor $SWP_NOSIZE
-[void][Allium.DialogFocus]::SetWindowPos($owner.Handle, [IntPtr]::new(-1), 0, 0, 0, 0, $swpFlags)
-[void][Allium.DialogFocus]::SetWindowPos($owner.Handle, [IntPtr]::new(-2), 0, 0, 0, 0, $swpFlags)
+[void][Vantastrap.DialogFocus]::SetWindowPos($owner.Handle, [IntPtr]::new(-1), 0, 0, 0, 0, $swpFlags)
+[void][Vantastrap.DialogFocus]::SetWindowPos($owner.Handle, [IntPtr]::new(-2), 0, 0, 0, 0, $swpFlags)
 } catch {}
 [System.Windows.Forms.Application]::DoEvents()
 $ofd = [System.Windows.Forms.OpenFileDialog]::new()
@@ -10141,7 +10141,7 @@ try {
 Add-Type -AssemblyName System.Windows.Forms -ErrorAction SilentlyContinue
 $sfd = [System.Windows.Forms.SaveFileDialog]::new()
 $sfd.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*"
-$sfd.FileName = "allium-fflags.json"
+$sfd.FileName = "Vantastrap-fflags.json"
 $sfd.Title = "Export FFlags"
 if ((Show-FileDialogWithOwner -Dialog $sfd) -eq [System.Windows.Forms.DialogResult]::OK) {
 try {
@@ -10701,7 +10701,7 @@ $launcherXaml = @"
   <Grid x:Name="TitleRegion" Grid.Row="0" Grid.ColumnSpan="2" Padding="0,2,0,2" MinHeight="32" Background="Transparent"/>
   <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" Spacing="2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,15,10,0">
     <Border x:Name="AppIconHost" Width="80" Height="80" HorizontalAlignment="Center"/>
-    <TextBlock Text="Allium" FontFamily="$xAppFont" FontSize="22" FontWeight="Bold" Foreground="$xPrimary" HorizontalAlignment="Center"/>
+    <TextBlock Text="Vantastrap" FontFamily="$xAppFont" FontSize="22" FontWeight="Bold" Foreground="$xPrimary" HorizontalAlignment="Center"/>
     <TextBlock Text="v1.0.0" FontFamily="$xAppFont" FontSize="12" Foreground="$xSecondary" HorizontalAlignment="Center" Margin="0,-3,0,0"/>
   </StackPanel>
   <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" Spacing="8" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,15,0,0">
@@ -11138,7 +11138,7 @@ $script:LauncherBootstrapperStatusText.Text = Get-BootstrapperStatusText
 }
 }
 $script:LastContainerScanAddress = [IntPtr]::Zero
-$global:AlliumAddressState = [pscustomobject]@{
+$global:VantastrapAddressState = [pscustomobject]@{
 HashmapBase = [IntPtr]::Zero
 RawSingletonPtr = [IntPtr]::Zero
 AcquiredAt = $null
@@ -11153,23 +11153,23 @@ function Test-RobloxRunning {
 $proc = Get-Process -Name 'RobloxPlayerBeta' -ErrorAction SilentlyContinue
 return ($null -ne $proc)
 }
-function Get-AlliumAddressState {
+function Get-VantastrapAddressState {
 [OutputType([pscustomobject])]
 param()
-return $global:AlliumAddressState
+return $global:VantastrapAddressState
 }
-function Reset-AlliumAddressState {
+function Reset-VantastrapAddressState {
 [OutputType([void])]
 param()
-$global:AlliumAddressState.HashmapBase = [IntPtr]::Zero
-$global:AlliumAddressState.RawSingletonPtr = [IntPtr]::Zero
-$global:AlliumAddressState.AcquiredAt = $null
-$global:AlliumAddressState.SourceQuorum = @()
-$global:AlliumAddressState.RobloxVersion = $null
-$global:AlliumAddressState.ScanDurationMs = 0
-$global:AlliumAddressState.PatternMatched = $null
-$global:AlliumAddressState.LastVerifyOk = $true
-$global:AlliumAddressState.FailureReason = $null
+$global:VantastrapAddressState.HashmapBase = [IntPtr]::Zero
+$global:VantastrapAddressState.RawSingletonPtr = [IntPtr]::Zero
+$global:VantastrapAddressState.AcquiredAt = $null
+$global:VantastrapAddressState.SourceQuorum = @()
+$global:VantastrapAddressState.RobloxVersion = $null
+$global:VantastrapAddressState.ScanDurationMs = 0
+$global:VantastrapAddressState.PatternMatched = $null
+$global:VantastrapAddressState.LastVerifyOk = $true
+$global:VantastrapAddressState.FailureReason = $null
 }
 function Test-AddressCandidate {
 [OutputType([bool])]
@@ -11179,13 +11179,13 @@ param(
 )
 if ($MapHeaderPtr -eq [IntPtr]::Zero) { return $false }
 try {
-$bytes = [Allium.MemoryReader]::ReadBytes($ProcessHandle, $MapHeaderPtr, 56)
+$bytes = [Vantastrap.MemoryReader]::ReadBytes($ProcessHandle, $MapHeaderPtr, 56)
 if ($null -eq $bytes -or $bytes.Length -lt 56) { return $false }
 $list = [BitConverter]::ToUInt64($bytes, 0x10)
 $mask = [BitConverter]::ToUInt64($bytes, 0x28)
 if ($mask -eq 0) { return $false }
 if ((($mask + 1) -band $mask) -ne 0) { return $false }
-$listProbe = [Allium.MemoryReader]::ReadBytes($ProcessHandle, [IntPtr]$list, 16)
+$listProbe = [Vantastrap.MemoryReader]::ReadBytes($ProcessHandle, [IntPtr]$list, 16)
 if ($null -eq $listProbe -or $listProbe.Length -lt 16) { return $false }
 return $true
 }
@@ -11338,11 +11338,11 @@ param(
 [Parameter(Mandatory)] [hashtable] $PatternEntry
 )
 try {
-$compiled = [Allium.PatternScanner]::Compile($PatternEntry.pattern)
-$match = [Allium.PatternScanner]::Scan($ProcessHandle, $ModuleBase, $ModuleSize, $compiled)
+$compiled = [Vantastrap.PatternScanner]::Compile($PatternEntry.pattern)
+$match = [Vantastrap.PatternScanner]::Scan($ProcessHandle, $ModuleBase, $ModuleSize, $compiled)
 if ($match -eq [IntPtr]::Zero) { return [IntPtr]::Zero }
 $hdrOff = if ($PatternEntry.ContainsKey('header_offset')) { [int]$PatternEntry.header_offset } else { 8 }
-$header = [Allium.RipRelativeDecoder]::Resolve(
+$header = [Vantastrap.RipRelativeDecoder]::Resolve(
 $ProcessHandle,
 $match,
 [int]$PatternEntry.disp_off,
@@ -11438,25 +11438,25 @@ catch {
 return $false
 }
 }
-function Save-AlliumAddressStateToCache {
+function Save-VantastrapAddressStateToCache {
 [OutputType([bool])]
 param(
 [Parameter(Mandatory)] [string] $Version,
 [string] $Path = $global:AddressCacheFile
 )
-if ($null -eq $global:AlliumAddressState) { return $false }
-if ($global:AlliumAddressState.HashmapBase -eq [IntPtr]::Zero) { return $false }
+if ($null -eq $global:VantastrapAddressState) { return $false }
+if ($global:VantastrapAddressState.HashmapBase -eq [IntPtr]::Zero) { return $false }
 $entry = @{
 RobloxVersion = $Version
-HashmapBase = [string]$global:AlliumAddressState.HashmapBase.ToInt64()
-RawSingletonPtr = [string]$global:AlliumAddressState.RawSingletonPtr.ToInt64()
-AcquiredAt = if ($global:AlliumAddressState.AcquiredAt) {
-$global:AlliumAddressState.AcquiredAt.ToString('o')
+HashmapBase = [string]$global:VantastrapAddressState.HashmapBase.ToInt64()
+RawSingletonPtr = [string]$global:VantastrapAddressState.RawSingletonPtr.ToInt64()
+AcquiredAt = if ($global:VantastrapAddressState.AcquiredAt) {
+$global:VantastrapAddressState.AcquiredAt.ToString('o')
 } else { $null }
-SourceQuorum = @($global:AlliumAddressState.SourceQuorum)
-ScanDurationMs = [long]$global:AlliumAddressState.ScanDurationMs
-PatternMatched = [string]$global:AlliumAddressState.PatternMatched
-LastVerifyOk = [bool]$global:AlliumAddressState.LastVerifyOk
+SourceQuorum = @($global:VantastrapAddressState.SourceQuorum)
+ScanDurationMs = [long]$global:VantastrapAddressState.ScanDurationMs
+PatternMatched = [string]$global:VantastrapAddressState.PatternMatched
+LastVerifyOk = [bool]$global:VantastrapAddressState.LastVerifyOk
 }
 return (Save-AddressCacheEntry -Version $Version -Entry $entry -Path $Path)
 }
@@ -11483,7 +11483,7 @@ $rva = [Convert]::ToInt64($rvaStr.Substring(2), 16)
 $rva = [Convert]::ToInt64($rvaStr, 16)
 }
 $slotAddr = [IntPtr]([long]$ModuleBase.ToInt64() + $rva)
-$slotBytes = [Allium.MemoryReader]::ReadBytes($ProcessHandle, $slotAddr, 8)
+$slotBytes = [Vantastrap.MemoryReader]::ReadBytes($ProcessHandle, $slotAddr, 8)
 if ($null -eq $slotBytes -or $slotBytes.Length -ne 8) {
 return [pscustomobject]@{ Address = [IntPtr]::Zero; Source = $null; FailureReason = 'hint-deref-failed' }
 }
@@ -11517,27 +11517,27 @@ param(
 [switch] $SkipCache,
 [switch] $ForceRescan
 )
-Reset-AlliumAddressState
+Reset-VantastrapAddressState
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 $currentVersion = Get-RobloxVersionFolder
 if ([string]::IsNullOrWhiteSpace($currentVersion)) {
 $currentVersion = 'unknown'
 }
-$global:AlliumAddressState.RobloxVersion = $currentVersion
+$global:VantastrapAddressState.RobloxVersion = $currentVersion
 if (-not $ForceRescan) {
 $hint = Get-RvaHintCandidate -ProcessHandle $ProcessHandle -ModuleBase $ModuleBase -Version $currentVersion
 if ($hint.Address -ne [IntPtr]::Zero) {
 $sw.Stop()
-$global:AlliumAddressState.HashmapBase = $hint.Address
-$global:AlliumAddressState.RawSingletonPtr = $hint.RawSingleton
-$global:AlliumAddressState.AcquiredAt = [DateTime]::UtcNow
-$global:AlliumAddressState.SourceQuorum = @(('rva-hint:' + $hint.Source))
-$global:AlliumAddressState.ScanDurationMs = $sw.ElapsedMilliseconds
-$global:AlliumAddressState.PatternMatched = 'rva-hint'
-$global:AlliumAddressState.LastVerifyOk = $true
-$global:AlliumAddressState.FailureReason = $null
+$global:VantastrapAddressState.HashmapBase = $hint.Address
+$global:VantastrapAddressState.RawSingletonPtr = $hint.RawSingleton
+$global:VantastrapAddressState.AcquiredAt = [DateTime]::UtcNow
+$global:VantastrapAddressState.SourceQuorum = @(('rva-hint:' + $hint.Source))
+$global:VantastrapAddressState.ScanDurationMs = $sw.ElapsedMilliseconds
+$global:VantastrapAddressState.PatternMatched = 'rva-hint'
+$global:VantastrapAddressState.LastVerifyOk = $true
+$global:VantastrapAddressState.FailureReason = $null
 if ($currentVersion -ne 'unknown') {
-Save-AlliumAddressStateToCache -Version $currentVersion | Out-Null
+Save-VantastrapAddressStateToCache -Version $currentVersion | Out-Null
 }
 return $true
 }
@@ -11554,14 +11554,14 @@ $rawPtr = if ($cached.ContainsKey('RawSingletonPtr')) {
 [IntPtr]([long]$cached.HashmapBase - 8)
 }
 $sw.Stop()
-$global:AlliumAddressState.HashmapBase = $hdrPtr
-$global:AlliumAddressState.RawSingletonPtr = $rawPtr
-$global:AlliumAddressState.AcquiredAt = [DateTime]::UtcNow
-$global:AlliumAddressState.SourceQuorum = @('cache')
-$global:AlliumAddressState.RobloxVersion = $currentVersion
-$global:AlliumAddressState.ScanDurationMs = $sw.ElapsedMilliseconds
-$global:AlliumAddressState.PatternMatched = 'cache'
-$global:AlliumAddressState.LastVerifyOk = $true
+$global:VantastrapAddressState.HashmapBase = $hdrPtr
+$global:VantastrapAddressState.RawSingletonPtr = $rawPtr
+$global:VantastrapAddressState.AcquiredAt = [DateTime]::UtcNow
+$global:VantastrapAddressState.SourceQuorum = @('cache')
+$global:VantastrapAddressState.RobloxVersion = $currentVersion
+$global:VantastrapAddressState.ScanDurationMs = $sw.ElapsedMilliseconds
+$global:VantastrapAddressState.PatternMatched = 'cache'
+$global:VantastrapAddressState.LastVerifyOk = $true
 return $true
 } else {
 Invoke-CacheInvalidation -Version $currentVersion | Out-Null
@@ -11574,8 +11574,8 @@ catch {
 $patterns = @(Read-AobPatterns)
 if ($patterns.Count -eq 0) {
 $sw.Stop()
-$global:AlliumAddressState.ScanDurationMs = $sw.ElapsedMilliseconds
-$global:AlliumAddressState.FailureReason = 'no-patterns'
+$global:VantastrapAddressState.ScanDurationMs = $sw.ElapsedMilliseconds
+$global:VantastrapAddressState.FailureReason = 'no-patterns'
 return $false
 }
 $resolved = New-Object System.Collections.Generic.List[hashtable]
@@ -11600,21 +11600,21 @@ $addrHex = '0x' + $grp.Name.ToString('X')
 $sources = ($grp.Group | ForEach-Object { $_.PatternId }) -join ', '
 Write-ConsoleLog -Message ("  Address $addrHex from patterns: $sources") -Level 'WARN'
 }
-$global:AlliumAddressState.ScanDurationMs = $sw.ElapsedMilliseconds
-$global:AlliumAddressState.FailureReason = 'no-match'
+$global:VantastrapAddressState.ScanDurationMs = $sw.ElapsedMilliseconds
+$global:VantastrapAddressState.FailureReason = 'no-match'
 return $false
 }
 $rawSingleton = [IntPtr]([long]$quorum.Address.ToInt64() - 8)
-$global:AlliumAddressState.HashmapBase = $quorum.Address
-$global:AlliumAddressState.RawSingletonPtr = $rawSingleton
-$global:AlliumAddressState.AcquiredAt = [DateTime]::UtcNow
-$global:AlliumAddressState.SourceQuorum = @($quorum.Sources)
-$global:AlliumAddressState.RobloxVersion = $currentVersion
-$global:AlliumAddressState.ScanDurationMs = $sw.ElapsedMilliseconds
-$global:AlliumAddressState.PatternMatched = ($quorum.Sources -join ',')
-$global:AlliumAddressState.LastVerifyOk = $true
+$global:VantastrapAddressState.HashmapBase = $quorum.Address
+$global:VantastrapAddressState.RawSingletonPtr = $rawSingleton
+$global:VantastrapAddressState.AcquiredAt = [DateTime]::UtcNow
+$global:VantastrapAddressState.SourceQuorum = @($quorum.Sources)
+$global:VantastrapAddressState.RobloxVersion = $currentVersion
+$global:VantastrapAddressState.ScanDurationMs = $sw.ElapsedMilliseconds
+$global:VantastrapAddressState.PatternMatched = ($quorum.Sources -join ',')
+$global:VantastrapAddressState.LastVerifyOk = $true
 if ($currentVersion -ne 'unknown') {
-Save-AlliumAddressStateToCache -Version $currentVersion | Out-Null
+Save-VantastrapAddressStateToCache -Version $currentVersion | Out-Null
 }
 return $true
 }
@@ -11738,7 +11738,7 @@ foreach ($u in $urls) {
 $result.UrlsTried += $u
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 try {
-$resp = Invoke-WebRequest -Uri $u -TimeoutSec $timeout -UserAgent 'AlliumFFlagOffsets/1.1' -UseBasicParsing -ErrorAction Stop
+$resp = Invoke-WebRequest -Uri $u -TimeoutSec $timeout -UserAgent 'VantastrapFFlagOffsets/1.1' -UseBasicParsing -ErrorAction Stop
 $sw.Stop()
 $result.ElapsedMs = [int]$sw.ElapsedMilliseconds
 $result.HttpStatus = [int]$resp.StatusCode
@@ -12325,12 +12325,12 @@ catch {
 return $true
 }
 }
-function Get-AlliumSourceSha {
+function Get-VantastrapSourceSha {
 [OutputType([string])]
 param()
 try {
-if ($null -ne $script:AlliumScriptPath -and (Test-Path $script:AlliumScriptPath)) {
-return (Get-FileHash -Algorithm SHA256 -LiteralPath $script:AlliumScriptPath).Hash.ToLower()
+if ($null -ne $script:VantastrapScriptPath -and (Test-Path $script:VantastrapScriptPath)) {
+return (Get-FileHash -Algorithm SHA256 -LiteralPath $script:VantastrapScriptPath).Hash.ToLower()
 }
 $selfPath = $MyInvocation.ScriptName
 if ([string]::IsNullOrWhiteSpace($selfPath) -and $null -ne $PSCommandPath) {
@@ -12343,12 +12343,12 @@ return (Get-FileHash -Algorithm SHA256 -LiteralPath $selfPath).Hash.ToLower()
 catch { }
 return '(unavailable)'
 }
-function Get-AlliumSourceLineCount {
+function Get-VantastrapSourceLineCount {
 [OutputType([int])]
 param()
 try {
-if ($null -ne $script:AlliumScriptPath -and (Test-Path $script:AlliumScriptPath)) {
-$bytes = [System.IO.File]::ReadAllBytes($script:AlliumScriptPath)
+if ($null -ne $script:VantastrapScriptPath -and (Test-Path $script:VantastrapScriptPath)) {
+$bytes = [System.IO.File]::ReadAllBytes($script:VantastrapScriptPath)
 $lf = 0
 foreach ($b in $bytes) { if ($b -eq 10) { $lf++ } }
 return ($lf + 1)
@@ -12365,7 +12365,7 @@ $chosenDir = $null
 try {
 Add-Type -AssemblyName System.Windows.Forms -ErrorAction SilentlyContinue
 $fbd = [System.Windows.Forms.FolderBrowserDialog]::new()
-$fbd.Description = 'Choose a folder to save the Allium diagnostic bundle:'
+$fbd.Description = 'Choose a folder to save the Vantastrap diagnostic bundle:'
 $fbd.UseDescriptionForTitle = $true
 $fbd.ShowNewFolderButton = $true
 $fbd.AutoUpgradeEnabled = $true
@@ -12380,12 +12380,12 @@ Write-ConsoleLog -Message 'Diagnostic bundle export cancelled by user.' -Level '
 return $null
 }
 $stamp = (Get-Date).ToString('yyyyMMdd_HHmmss')
-$bundleDir = Join-Path $chosenDir ('AlliumDiagnostic_' + $stamp)
+$bundleDir = Join-Path $chosenDir ('VantastrapDiagnostic_' + $stamp)
 New-Item -Path $bundleDir -ItemType Directory -Force | Out-Null
 $meta = @{
-allium_sha = Get-AlliumSourceSha
-allium_line_count = Get-AlliumSourceLineCount
-allium_path = if ($null -ne $script:AlliumScriptPath) { [string]$script:AlliumScriptPath } else { '(unavailable)' }
+Vantastrap_sha = Get-VantastrapSourceSha
+Vantastrap_line_count = Get-VantastrapSourceLineCount
+Vantastrap_path = if ($null -ne $script:VantastrapScriptPath) { [string]$script:VantastrapScriptPath } else { '(unavailable)' }
 powershell = $PSVersionTable.PSVersion.ToString()
 ps_edition = $PSVersionTable.PSEdition
 os = [System.Runtime.InteropServices.RuntimeInformation]::OSDescription
@@ -12393,7 +12393,7 @@ os_arch = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.To
 captured_at = ([DateTime]::UtcNow.ToString('o'))
 data_root = if ($null -ne $script:DataRoot) { [string]$script:DataRoot } else { '(unset)' }
 }
-$meta | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $bundleDir 'allium_diagnostic.json') -Encoding utf8
+$meta | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $bundleDir 'Vantastrap_diagnostic.json') -Encoding utf8
 $dataDir = $script:DataRoot
 if ($dataDir -and (Test-Path $dataDir)) {
 $copyTargets = @(
@@ -12809,12 +12809,12 @@ $autoDetectCard = New-SettingsToggleCard -Header 'Auto-detect bootstrappers on l
 $minimizeTrayCard = New-SettingsToggleCard -Header 'Minimize to system tray' -Description 'Hides to the notification area instead of closing.' -SettingsKey 'minimizeToTray' -IsOn $script:Settings.minimizeToTray -SetHelpText
 $warnIfRunningCard = New-SettingsToggleCard -Header 'Warn if Roblox is already running' -Description 'Shows a confirmation popup when clicking Save and Launch if a Roblox process is already open.' -SettingsKey 'warnIfRobloxRunning' -IsOn $script:Settings.warnIfRobloxRunning -SetHelpText
 $debugLoggingCard = New-SettingsToggleCard -Header 'Debug logging' -Description ' Writes verbose diagnostics to debug.log and the console.' -SettingsKey 'debugLogging' -IsOn $script:Settings.debugLogging -SetHelpText
-$__alliumDesktopDir = ''
-try { $__alliumDesktopDir = [Environment]::GetFolderPath([Environment+SpecialFolder]::DesktopDirectory) } catch { }
-$__alliumShortcutExists = $false
+$__VantastrapDesktopDir = ''
+try { $__VantastrapDesktopDir = [Environment]::GetFolderPath([Environment+SpecialFolder]::DesktopDirectory) } catch { }
+$__VantastrapShortcutExists = $false
 try {
-if (-not [string]::IsNullOrWhiteSpace($__alliumDesktopDir)) {
-$__alliumShortcutExists = Test-Path -LiteralPath ([System.IO.Path]::Combine($__alliumDesktopDir, 'Allium.lnk'))
+if (-not [string]::IsNullOrWhiteSpace($__VantastrapDesktopDir)) {
+$__VantastrapShortcutExists = Test-Path -LiteralPath ([System.IO.Path]::Combine($__VantastrapDesktopDir, 'Vantastrap.lnk'))
 }
 } catch { }
 $onDesktopShortcutChange = {
@@ -12822,11 +12822,11 @@ param($isOn)
 try {
 $desktop = [Environment]::GetFolderPath([Environment+SpecialFolder]::DesktopDirectory)
 if ([string]::IsNullOrWhiteSpace($desktop)) { throw 'Could not resolve the Desktop folder.' }
-$lnk = [System.IO.Path]::Combine($desktop, 'Allium.lnk')
+$lnk = [System.IO.Path]::Combine($desktop, 'Vantastrap.lnk')
 if ($isOn) {
 $psExe = try { (Get-Process -Id $PID).Path } catch { $null }
 if ([string]::IsNullOrWhiteSpace($psExe)) { $psExe = Join-Path $PSHOME 'powershell.exe' }
-$scriptPath = [string]$script:AlliumScriptPath
+$scriptPath = [string]$script:VantastrapScriptPath
 $workDir = try { Split-Path -Parent $scriptPath } catch { '' }
 $iconPath = [string]$script:IconPath
 $shell = New-Object -ComObject WScript.Shell
@@ -12835,7 +12835,7 @@ $sc.TargetPath = $psExe
 $sc.Arguments = '-NoProfile -ExecutionPolicy Bypass -File "' + $scriptPath + '"'
 $sc.WorkingDirectory = $workDir
 if (Test-Path -LiteralPath $iconPath) { $sc.IconLocation = $iconPath + ',0' }
-$sc.Description = 'Open Allium'
+$sc.Description = 'Open Vantastrap'
 $sc.WindowStyle = 1
 $sc.Save()
 Write-ConsoleLog -Message '[desktop-shortcut] Desktop shortcut created.' -Level 'INFO'
@@ -12851,7 +12851,7 @@ Write-ConsoleLog -Message '[desktop-shortcut] No desktop shortcut to remove.' -L
 Write-ConsoleLog -Message ('[desktop-shortcut] toggle action failed: ' + $_.Exception.Message) -Level 'ERROR'
 }
 }
-$desktopShortcutCard = New-SettingsToggleCard -Header 'Desktop shortcut' -Description 'Adds or removes an Allium desktop shortcut.' -SettingsKey 'desktopShortcutEnabled' -IsOn $__alliumShortcutExists -OnChange $onDesktopShortcutChange -SetHelpText
+$desktopShortcutCard = New-SettingsToggleCard -Header 'Desktop shortcut' -Description 'Adds or removes an Vantastrap desktop shortcut.' -SettingsKey 'desktopShortcutEnabled' -IsOn $__VantastrapShortcutExists -OnChange $onDesktopShortcutChange -SetHelpText
 $onMultiInstanceChange = {
 param($isOn)
 Set-RobloxMultiInstance -Enabled $isOn
@@ -13302,7 +13302,7 @@ $__tim.AddTick({
 param($argumentList, $ts, $te)
 $ts.Stop()
 try {
-$__result = Install-AlliumProxyCA
+$__result = Install-VantastrapProxyCA
 if ($null -ne $__result -and $__result.Success) {
 if ($null -ne $script:HttpsPageCaStatusValue) { $script:HttpsPageCaStatusValue.Text = 'Installed' }
 if ($null -ne $script:HttpsPageCaThumbValue) {
@@ -13362,7 +13362,7 @@ $__tim.AddTick({
 param($argumentList, $ts, $te)
 $ts.Stop()
 try {
-$__result = Uninstall-AlliumProxyCA
+$__result = Uninstall-VantastrapProxyCA
 if ($null -ne $__result -and $__result.Success) {
 if ($null -ne $script:HttpsPageCaDetailText) {
 $script:HttpsPageCaDetailText.Text = ('CA uninstalled. Stripped: ' + $__result.Stripped + ', Restored: ' + $__result.Restored + ', Failed: ' + $__result.Failed)
@@ -13489,7 +13489,7 @@ $__confirmPanel = [WinUIShell.Microsoft.UI.Xaml.Controls.StackPanel]::new()
 $__confirmPanel.Orientation = [WinUIShell.Microsoft.UI.Xaml.Controls.Orientation]::Vertical
 $__confirmPanel.Spacing = 8
 $__confirmMsg = [WinUIShell.Microsoft.UI.Xaml.Controls.TextBlock]::new()
-$__confirmMsg.Text = 'This will stop the proxy, uninstall the Allium root CA from every discovered Roblox installation, and remove the ALLIUM HOSTS block from your Windows hosts file. Continue?'
+$__confirmMsg.Text = 'This will stop the proxy, uninstall the Vantastrap root CA from every discovered Roblox installation, and remove the Vantastrap HOSTS block from your Windows hosts file. Continue?'
 $__confirmMsg.TextWrapping = [WinUIShell.Microsoft.UI.Xaml.TextWrapping]::Wrap
 $__confirmMsg.FontSize = 13
 $__confirmMsg.Foreground = New-SolidBrush -Hex $script:ThemeColors.TextPrimary
@@ -13525,7 +13525,7 @@ $__parts += 'proxy stopped'
 $__parts += ('stop-error: ' + $_.Exception.Message)
 }
 try {
-$__uninst = Uninstall-AlliumProxyCA
+$__uninst = Uninstall-VantastrapProxyCA
 if ($null -ne $__uninst) {
 $__parts += ('CA uninst: stripped=' + $__uninst.Stripped + ' restored=' + $__uninst.Restored + ' failed=' + $__uninst.Failed)
 }
@@ -13535,8 +13535,8 @@ $__parts += ('ca-error: ' + $_.Exception.Message)
 try {
 if (Test-Path $script:HttpsHostsPath -PathType Leaf) {
 $__existing = [System.IO.File]::ReadAllText($script:HttpsHostsPath)
-if ($__existing.Contains('# ==== BEGIN ALLIUM HOSTS')) {
-$__pattern = '(?s)\r?\n?# ==== BEGIN ALLIUM HOSTS ====.*?# ==== END ALLIUM HOSTS ====\r?\n?'
+if ($__existing.Contains('# ==== BEGIN Vantastrap HOSTS')) {
+$__pattern = '(?s)\r?\n?# ==== BEGIN Vantastrap HOSTS ====.*?# ==== END Vantastrap HOSTS ====\r?\n?'
 $__stripped = [regex]::Replace($__existing, $__pattern, '')
 [System.IO.File]::WriteAllText($script:HttpsHostsPath, $__stripped)
 $__parts += 'hosts sentinel stripped'
@@ -13651,8 +13651,8 @@ return $panelHost.ScrollViewer
 function New-SettingsAboutPage {
 $panelHost = New-SettingsPanelHost
 $panel = $panelHost.Panel
-$sha = Get-AlliumSourceSha
-$lineCount = Get-AlliumSourceLineCount
+$sha = Get-VantastrapSourceSha
+$lineCount = Get-VantastrapSourceLineCount
 $psVer = $PSVersionTable.PSVersion.ToString()
 $xVersion = [System.Security.SecurityElement]::Escape([string]$script:AppVersion)
 $xSha = [System.Security.SecurityElement]::Escape([string]$sha)
@@ -13718,7 +13718,7 @@ Write-ConsoleLog -Message ('Failed to open credit URL: ' + $_.Exception.Message)
 }.GetNewClosure())
 }
 }
-$creditsGroup = New-SettingsCardGroup -Header 'Credits' -Description 'Individuals and projects Allium builds on.' -Rows @($creditsStack) -InfoCard
+$creditsGroup = New-SettingsCardGroup -Header 'Credits' -Description 'Individuals and projects Vantastrap builds on.' -Rows @($creditsStack) -InfoCard
 $panel.Children.Add($creditsGroup) | Out-Null
 $logPath = if ($null -ne $script:DebugLogFile) { [string]$script:DebugLogFile } else { '(unset)' }
 $openLogBtn = New-ThemedButton -Content 'Open Log' -ToolbarStyle
@@ -13801,7 +13801,7 @@ try { $xr = $s.XamlRoot } catch { }
 if ($null -eq $xr) {
 try { $xr = $script:SettingsWindow.Content.XamlRoot } catch { }
 }
-Invoke-AlliumDumperAsync -Title 'Running FFlag dump' -Message 'Extracting flags from the running Roblox client. This usually takes 15-25 seconds.' -XamlRoot $xr -Work { Get-AlliumFFlagDump -Strategy 'Auto' } -OnComplete {
+Invoke-VantastrapDumperAsync -Title 'Running FFlag dump' -Message 'Extracting flags from the running Roblox client. This usually takes 15-25 seconds.' -XamlRoot $xr -Work { Get-VantastrapFFlagDump -Strategy 'Auto' } -OnComplete {
 param($result)
 try {
 if ($null -ne $script:RefreshDumperDiagnostics) {
@@ -13852,7 +13852,7 @@ $capturedDumpsDir = [string]$global:DumpsDir
 $openFolderButton.AddClick({
 try {
 if (-not (Test-Path $capturedDumpsDir)) {
-Initialize-AlliumDumperDataDirs
+Initialize-VantastrapDumperDataDirs
 }
 Start-Process -FilePath $capturedDumpsDir -ErrorAction Stop
 } catch {
@@ -13878,9 +13878,9 @@ $statsStack.Children.Add($durationRes.Row) | Out-Null
 $statsStack.Children.Add($timestampRes.Row) | Out-Null
 $statsStack.Children.Add($agreementRes.Row) | Out-Null
 $statsGroup = New-SettingsCardGroup -Header 'Last dump' -Description 'Statistics from the most recent successful dump session.' -Rows @($statsStack) -InfoCard
-$cacheAge = Get-AlliumFVariablesCacheAge
+$cacheAge = Get-VantastrapFVariablesCacheAge
 if ($cacheAge.IsPresent -and $null -ne $cacheAge.Age) {
-$cacheAgeText = Format-AlliumTimespanShort -Span $cacheAge.Age
+$cacheAgeText = Format-VantastrapTimespanShort -Span $cacheAge.Age
 } elseif ($cacheAge.IsPresent) {
 $cacheAgeText = '(unknown)'
 } else {
@@ -13900,15 +13900,15 @@ try { $xr = $s.XamlRoot } catch { }
 if ($null -eq $xr) {
 try { $xr = $script:SettingsWindow.Content.XamlRoot } catch { }
 }
-Invoke-AlliumDumperAsync -Title 'Refreshing FVariables cache' -Message 'Fetching the latest flag prefix map from MaximumADHD and souloveryall.' -XamlRoot $xr -Work { Get-AlliumFVariables -ForceRefresh | Out-Null; return @{ Success = $true } } -OnComplete {
+Invoke-VantastrapDumperAsync -Title 'Refreshing FVariables cache' -Message 'Fetching the latest flag prefix map from MaximumADHD and souloveryall.' -XamlRoot $xr -Work { Get-VantastrapFVariables -ForceRefresh | Out-Null; return @{ Success = $true } } -OnComplete {
 param($result)
 if ($null -ne $result -and $result -is [hashtable] -and $result.ContainsKey('Error')) {
 Write-ConsoleLog -Message ('FVariables refresh failed: ' + $result.Error) -Level 'ERROR'
 }
 try {
-$fresh = Get-AlliumFVariablesCacheAge
+$fresh = Get-VantastrapFVariablesCacheAge
 $newText = if ($fresh.IsPresent -and $null -ne $fresh.Age) {
-Format-AlliumTimespanShort -Span $fresh.Age
+Format-VantastrapTimespanShort -Span $fresh.Age
 } elseif ($fresh.IsPresent) { '(unknown)' } else { '(no cache yet)' }
 if ($null -ne $script:DumperCacheAgeRefs) {
 $script:DumperCacheAgeRefs.AgeBlock.Text = $newText
@@ -13966,7 +13966,7 @@ try {
 $stackRef = $script:DumperStrategyDiagRefs.Stack
 if ($null -eq $stackRef) { return }
 $stackRef.Children.Clear()
-$reg = Get-AlliumDumperStrategyRegistry
+$reg = Get-VantastrapDumperStrategyRegistry
 if ($null -eq $reg -or $null -eq $reg.Order -or $reg.Order.Count -eq 0) {
 $noneTb = [WinUIShell.Microsoft.UI.Xaml.Controls.TextBlock]::new()
 $noneTb.Text = '(no strategies registered)'
@@ -13986,7 +13986,7 @@ $safetyTag = if ($telem.IsHyperionSafe) { ' [Hyperion-safe]' } else { '' }
 if ($null -eq $telem.LastRunTime) {
 $status = '(no run yet)'
 } elseif ([string]::IsNullOrWhiteSpace($telem.LastError)) {
-$lastTs = Format-AlliumTimespanShort -Span ((Get-Date) - [datetime]$telem.LastRunTime)
+$lastTs = Format-VantastrapTimespanShort -Span ((Get-Date) - [datetime]$telem.LastRunTime)
 $status = ($telem.LastFlagCount.ToString() + ' flags, ' + $telem.LastElapsedMs.ToString() + ' ms, ' + $lastTs + ' ago')
 } else {
 $status = ('FAILED: ' + $telem.LastError)
@@ -14024,7 +14024,7 @@ $historyStack.Margin = [WinUIShell.Microsoft.UI.Xaml.Thickness]::new(16, 0, 0, 0
 for ($k = $strategy.History.Count - 1; $k -ge 0; $k--) {
 $entry = $strategy.History[$k]
 $ageStr = if ($null -ne $entry.RunTime) {
-Format-AlliumTimespanShort -Span ((Get-Date) - [datetime]$entry.RunTime)
+Format-VantastrapTimespanShort -Span ((Get-Date) - [datetime]$entry.RunTime)
 } else { '?' }
 $idx = $strategy.History.Count - $k
 $line = [WinUIShell.Microsoft.UI.Xaml.Controls.TextBlock]::new()
@@ -14214,13 +14214,13 @@ $titleRegion.Background = [WinUIShell.Microsoft.UI.Xaml.Media.SolidColorBrush]::
 $titleStack = [WinUIShell.Microsoft.UI.Xaml.Controls.StackPanel]::new()
 $titleStack.Spacing = 2
 $titleText = [WinUIShell.Microsoft.UI.Xaml.Controls.TextBlock]::new()
-$titleText.Text = 'Allium Settings'
+$titleText.Text = 'Vantastrap Settings'
 Set-SafeFontFamily -Target $titleText -Family $script:AppFontFamily
 $titleText.FontSize = 20
 $titleText.FontWeight = [WinUIShell.Microsoft.UI.Text.FontWeights]::SemiBold
 $titleText.Foreground = New-SolidBrush -Hex $script:ThemeColors.TextPrimary
 $subtitleText = [WinUIShell.Microsoft.UI.Xaml.Controls.TextBlock]::new()
-$subtitleText.Text = 'Configure Allium behavior, watchdog, memory mode, and more.'
+$subtitleText.Text = 'Configure Vantastrap behavior, watchdog, memory mode, and more.'
 Set-SafeFontFamily -Target $subtitleText -Family $script:AppFontFamily
 $subtitleText.FontSize = 14
 $subtitleText.Foreground = New-SolidBrush -Hex $script:ThemeColors.TextSecondary
@@ -14456,7 +14456,7 @@ HistoryCount = $this.History.Count
 }
 $script:DumperStrategyRegistry = $null
 $script:DumperStrategyOrder = @()
-function Register-AlliumDumperStrategy {
+function Register-VantastrapDumperStrategy {
 [OutputType([void])]
 param(
 [Parameter(Mandatory)] [string] $Name,
@@ -14482,35 +14482,35 @@ if ($script:DumperStrategyOrder -notcontains $Name) {
 $script:DumperStrategyOrder += $Name
 }
 }
-function Initialize-AlliumDumperStrategies {
+function Initialize-VantastrapDumperStrategies {
 [OutputType([void])]
 param([switch] $Force)
 if ($null -ne $script:DumperStrategyRegistry -and -not $Force) { return }
 $script:DumperStrategyRegistry = @{}
 $script:DumperStrategyOrder = @()
-Register-AlliumDumperStrategy -Name 'static-live' -Description 'Codegen-agnostic live-process static extractor (Block J StaticFlagExtractor). LEA-pair scan of .text at 13-byte spacing.' -Invoker { param($Target, $FVarLookup) Invoke-AlliumStaticDump -Target $Target -FVarLookup $FVarLookup } -IsHyperionSafe $false -RequiresProcessAttach $true -IsOfflineCapable $false
-Register-AlliumDumperStrategy -Name 'container-scan' -Description 'Memory signature scan of the FFlag container (Block J ContainerScanner). Hyperion-immune on current builds. Primary strategy.' -Invoker { param($Target, $FVarLookup) Invoke-AlliumContainerScanDump -Target $Target -FVarLookup $FVarLookup } -IsHyperionSafe $true -RequiresProcessAttach $true -IsOfflineCapable $false
-Register-AlliumDumperStrategy -Name 'souloveryall' -Description 'Souloveryall + Theo + MaximumADHD offset cache tier chain. Last-resort fallback when live strategies fail.' -Invoker { param($Target, $FVarLookup) Invoke-AlliumSouloveryallDump -Target $Target -FVarLookup $FVarLookup } -IsHyperionSafe $true -RequiresProcessAttach $false -IsOfflineCapable $true
-Register-AlliumDumperStrategy -Name 'bucket-walk' -Description 'bucket-walking FFlag hashmap traversal via Block D HashmapWalker.DumpAllBuckets. Fails on Hyperion-guarded builds.' -Invoker { param($Target, $FVarLookup) Invoke-AlliumHashmapDump -Target $Target } -IsHyperionSafe $false -RequiresProcessAttach $true -IsOfflineCapable $false
-Register-AlliumDumperStrategy -Name 'flag-value-map' -Description 'GetSet-indirection FFlag map walker. Enumerates every entry with typed name/rva/value via linked list walk from the sentinel 0x3F800000 anchor. Hyperion-safe live-memory strategy; also produces default-value snapshots. Primary source in the quorum merge.' -Invoker { param($Target, $FVarLookup) Invoke-AlliumFlagValueMapDump -Target $Target -FVarLookup $FVarLookup } -IsHyperionSafe $true -RequiresProcessAttach $true -IsOfflineCapable $false
+Register-VantastrapDumperStrategy -Name 'static-live' -Description 'Codegen-agnostic live-process static extractor (Block J StaticFlagExtractor). LEA-pair scan of .text at 13-byte spacing.' -Invoker { param($Target, $FVarLookup) Invoke-VantastrapStaticDump -Target $Target -FVarLookup $FVarLookup } -IsHyperionSafe $false -RequiresProcessAttach $true -IsOfflineCapable $false
+Register-VantastrapDumperStrategy -Name 'container-scan' -Description 'Memory signature scan of the FFlag container (Block J ContainerScanner). Hyperion-immune on current builds. Primary strategy.' -Invoker { param($Target, $FVarLookup) Invoke-VantastrapContainerScanDump -Target $Target -FVarLookup $FVarLookup } -IsHyperionSafe $true -RequiresProcessAttach $true -IsOfflineCapable $false
+Register-VantastrapDumperStrategy -Name 'souloveryall' -Description 'Souloveryall + Theo + MaximumADHD offset cache tier chain. Last-resort fallback when live strategies fail.' -Invoker { param($Target, $FVarLookup) Invoke-VantastrapSouloveryallDump -Target $Target -FVarLookup $FVarLookup } -IsHyperionSafe $true -RequiresProcessAttach $false -IsOfflineCapable $true
+Register-VantastrapDumperStrategy -Name 'bucket-walk' -Description 'bucket-walking FFlag hashmap traversal via Block D HashmapWalker.DumpAllBuckets. Fails on Hyperion-guarded builds.' -Invoker { param($Target, $FVarLookup) Invoke-VantastrapHashmapDump -Target $Target } -IsHyperionSafe $false -RequiresProcessAttach $true -IsOfflineCapable $false
+Register-VantastrapDumperStrategy -Name 'flag-value-map' -Description 'GetSet-indirection FFlag map walker. Enumerates every entry with typed name/rva/value via linked list walk from the sentinel 0x3F800000 anchor. Hyperion-safe live-memory strategy; also produces default-value snapshots. Primary source in the quorum merge.' -Invoker { param($Target, $FVarLookup) Invoke-VantastrapFlagValueMapDump -Target $Target -FVarLookup $FVarLookup } -IsHyperionSafe $true -RequiresProcessAttach $true -IsOfflineCapable $false
 }
-function Get-AlliumDumperStrategyRegistry {
+function Get-VantastrapDumperStrategyRegistry {
 [OutputType([hashtable])]
 param()
-Initialize-AlliumDumperStrategies
+Initialize-VantastrapDumperStrategies
 return @{
 Registry = $script:DumperStrategyRegistry
 Order = $script:DumperStrategyOrder
 }
 }
-function Invoke-AlliumDumperStrategyByName {
+function Invoke-VantastrapDumperStrategyByName {
 [OutputType([hashtable])]
 param(
 [Parameter(Mandatory)] [string] $Name,
 [Parameter(Mandatory)] [hashtable] $Target,
 [hashtable] $FVarLookup = @{}
 )
-Initialize-AlliumDumperStrategies
+Initialize-VantastrapDumperStrategies
 if (-not $script:DumperStrategyRegistry.ContainsKey($Name)) {
 throw ('Unknown dumper strategy: ' + $Name)
 }
@@ -14542,7 +14542,7 @@ if ($null -ne $script:RefreshDumperDiagnostics) {
 } catch { }
 return $result
 }
-function Initialize-AlliumDumperDataDirs {
+function Initialize-VantastrapDumperDataDirs {
 if (-not (Test-Path $global:DumpsDir)) {
 New-Item -Path $global:DumpsDir -ItemType Directory -Force | Out-Null
 }
@@ -14550,7 +14550,7 @@ if (-not (Test-Path $global:GenealogyDir)) {
 New-Item -Path $global:GenealogyDir -ItemType Directory -Force | Out-Null
 }
 }
-function Test-AlliumFVariablesStale {
+function Test-VantastrapFVariablesStale {
 [OutputType([bool])]
 param()
 if (-not (Test-Path $global:FVariablesCache)) { return $true }
@@ -14564,7 +14564,7 @@ return ($cached['version'] -ne $current)
 return $true
 }
 }
-function Format-AlliumTimespanShort {
+function Format-VantastrapTimespanShort {
 param([TimeSpan] $Span)
 if ($null -eq $Span) { return '?' }
 $t = [TimeSpan]$Span
@@ -14573,7 +14573,7 @@ if ($t.TotalHours -ge 1) { return ('{0}h {1}m' -f [int]$t.TotalHours, $t.Minutes
 if ($t.TotalMinutes -ge 1) { return ('{0}m' -f [int]$t.TotalMinutes) }
 return ('{0}s' -f [int]$t.TotalSeconds)
 }
-function Get-AlliumFVariablesCacheAge {
+function Get-VantastrapFVariablesCacheAge {
 [OutputType([hashtable])]
 param()
 if (-not (Test-Path $global:FVariablesCache)) {
@@ -14659,7 +14659,7 @@ $rd["ContentDialogTopOverlay"] = New-SolidBrush -Hex $script:ThemeColors.Surface
 try { Set-AccentResourceOverrides -ResourceDictionary $dlg.Resources } catch { }
 return @{ Dialog = $dlg; MessageBlock = $msgTb }
 }
-function Invoke-AlliumDumperAsync {
+function Invoke-VantastrapDumperAsync {
 param(
 [Parameter(Mandatory)] [string] $Title,
 [Parameter(Mandatory)] [string] $Message,
@@ -14705,11 +14705,11 @@ Write-ConsoleLog -Message ('Dumper OnComplete failed: ' + $_.Exception.Message) 
 Write-ConsoleLog -Message 'Dumper work never executed (timer did not tick before dialog closed)' -Level 'WARN'
 }
 }
-function Get-AlliumFVariables {
+function Get-VantastrapFVariables {
 [OutputType([hashtable])]
 param([switch] $ForceRefresh)
-Initialize-AlliumDumperDataDirs
-$useCached = (-not $ForceRefresh) -and (-not (Test-AlliumFVariablesStale))
+Initialize-VantastrapDumperDataDirs
+$useCached = (-not $ForceRefresh) -and (-not (Test-VantastrapFVariablesStale))
 if ($useCached) {
 try {
 $cached = Read-Json -Path $global:FVariablesCache
@@ -14717,7 +14717,7 @@ if ($null -ne $cached -and $cached.ContainsKey('flags')) { return $cached['flags
 } catch { }
 }
 $fvarLookup = @{}
-$ua = 'AlliumFFlagDumper/0.9.3'
+$ua = 'VantastrapFFlagDumper/0.9.3'
 $prefixRegex = '^((DF|F|SF)(Flag|Int|String|Log))(.+)$'
 $sourcesUsed = @()
 try {
@@ -14831,23 +14831,23 @@ if ($null -ne $cached -and $cached.ContainsKey('flags')) { return $cached['flags
 }
 return $fvarLookup
 }
-function Get-AlliumFFlagDumpTarget {
+function Get-VantastrapFFlagDumpTarget {
 [OutputType([hashtable])]
 param()
-$pids = [Allium.ProcessAttach]::FindProcessesByName('RobloxPlayerBeta.exe')
+$pids = [Vantastrap.ProcessAttach]::FindProcessesByName('RobloxPlayerBeta.exe')
 if ($null -eq $pids -or $pids.Length -eq 0) {
 return @{ Success = $false; Error = 'Roblox not running'; Pid = 0 }
 }
 $targetPid = [uint32]$pids[0]
-$handle = [Allium.ProcessAttach]::OpenForReadWrite($targetPid)
+$handle = [Vantastrap.ProcessAttach]::OpenForReadWrite($targetPid)
 if ($null -eq $handle -or $handle.IsInvalid) {
 return @{ Success = $false; Error = 'OpenForReadWrite failed'; Pid = $targetPid }
 }
-$modInfo = [Allium.ProcessAttach]::GetPrimaryModuleBase($handle)
+$modInfo = [Vantastrap.ProcessAttach]::GetPrimaryModuleBase($handle)
 $modBase = $modInfo.Item1
 $modSize = $modInfo.Item2
 if ($modBase -eq [IntPtr]::Zero -or $modSize -eq 0) {
-[Allium.ProcessAttach]::Close($handle)
+[Vantastrap.ProcessAttach]::Close($handle)
 return @{ Success = $false; Error = 'GetPrimaryModuleBase failed'; Pid = $targetPid }
 }
 $exePath = Get-RobloxPlayerPath
@@ -14862,19 +14862,19 @@ ExePath = $exePath
 Version = $version
 }
 }
-function Invoke-AlliumHashmapDump {
+function Invoke-VantastrapHashmapDump {
 [OutputType([hashtable])]
 param([Parameter(Mandatory)] [hashtable] $Target)
 $result = @{ Strategy = 'bucket-walk'; Flags = @{}; DurationMs = 0; Error = $null }
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 try {
-$addrState = Get-AlliumAddressState
+$addrState = Get-VantastrapAddressState
 if ($null -eq $addrState -or $addrState.HashmapBase -eq [IntPtr]::Zero) {
 Write-ConsoleLog -Message 'Hashmap base not cached; triggering multi-source address acquisition...' -Level 'INFO'
 try {
 $ok = Invoke-AddressAcquisitionMulti -ProcessHandle $Target.Handle -ModuleBase $Target.ModBase -ModuleSize $Target.ModSize
 if ($ok) {
-$addrState = Get-AlliumAddressState
+$addrState = Get-VantastrapAddressState
 }
 } catch {
 Write-ConsoleLog -Message ('Auto-acquisition failed: ' + $_.Exception.Message) -Level 'WARN'
@@ -14886,8 +14886,8 @@ return $result
 }
 $mapPtr = $addrState.HashmapBase
 $mapPtr = [IntPtr]$addrState['hashmap_base_intptr']
-$offsets = [Allium.AlliumOffsetsModule]::Current
-$entries = [Allium.HashmapWalker]::DumpAllBuckets($Target.Handle, $mapPtr, $offsets)
+$offsets = [Vantastrap.VantastrapOffsetsModule]::Current
+$entries = [Vantastrap.HashmapWalker]::DumpAllBuckets($Target.Handle, $mapPtr, $offsets)
 foreach ($e in $entries) {
 if ($null -eq $e -or [string]::IsNullOrEmpty($e.Name)) { continue }
 $result.Flags[$e.Name] = @{
@@ -14905,7 +14905,7 @@ $sw.Stop()
 $result.DurationMs = [int]$sw.ElapsedMilliseconds
 return $result
 }
-function Invoke-AlliumStaticDump {
+function Invoke-VantastrapStaticDump {
 [OutputType([hashtable])]
 param(
 [Parameter(Mandatory)] [hashtable] $Target,
@@ -14914,9 +14914,9 @@ param(
 $result = @{ Strategy = 'static-live'; Flags = @{}; DurationMs = 0; Error = $null }
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 try {
-$sections = [Allium.PeSectionEnumerator]::Enumerate($Target.Handle, $Target.ModBase)
-$text = [Allium.PeSectionEnumerator]::FindByName($sections, '.text')
-$rdata = [Allium.PeSectionEnumerator]::FindByName($sections, '.rdata')
+$sections = [Vantastrap.PeSectionEnumerator]::Enumerate($Target.Handle, $Target.ModBase)
+$text = [Vantastrap.PeSectionEnumerator]::FindByName($sections, '.text')
+$rdata = [Vantastrap.PeSectionEnumerator]::FindByName($sections, '.rdata')
 if ($null -eq $text -or $null -eq $rdata) {
 $result.Error = 'Required PE section (.text or .rdata) not found'
 return $result
@@ -14928,7 +14928,7 @@ foreach ($rawName in $FVarLookup.Keys) {
 }
 }
 Write-ConsoleLog -Message ("  [static-live] Scanning .text (" + $text.VirtualSize + " bytes) with " + $allowed.Count + " allowed names") -Level 'INFO'
-$sfeResult = [Allium.StaticFlagExtractor]::Extract($Target.Handle, $text.VirtualAddress, $text.VirtualSize, $rdata.VirtualAddress, $rdata.VirtualSize, $allowed, 128)
+$sfeResult = [Vantastrap.StaticFlagExtractor]::Extract($Target.Handle, $text.VirtualAddress, $text.VirtualSize, $rdata.VirtualAddress, $rdata.VirtualSize, $allowed, 128)
 Write-ConsoleLog -Message ("  [static-live] .text  read: bytesReadable=" + $sfeResult.TextBytesReadable + " bytesSkipped=" + $sfeResult.TextBytesSkipped + " regionsSkipped=" + $sfeResult.TextRegionsSkipped) -Level 'INFO'
 Write-ConsoleLog -Message ("  [static-live] .rdata read: bytesReadable=" + $sfeResult.RdataBytesReadable + " bytesSkipped=" + $sfeResult.RdataBytesSkipped + " regionsSkipped=" + $sfeResult.RdataRegionsSkipped) -Level 'INFO'
 Write-ConsoleLog -Message ("  [static-live] Diagnostics: leaRdxHits=" + $sfeResult.LeaRdxHits + " nameHits=" + $sfeResult.NameStringHits + " allowHits=" + $sfeResult.AllowlistHits + " paired=" + $sfeResult.PairedWithValueLea) -Level 'INFO'
@@ -14964,7 +14964,7 @@ $sw.Stop()
 $result.DurationMs = [int]$sw.ElapsedMilliseconds
 return $result
 }
-function Invoke-AlliumContainerScanDump {
+function Invoke-VantastrapContainerScanDump {
 [OutputType([hashtable])]
 param(
 [Parameter(Mandatory)] [hashtable] $Target,
@@ -14976,7 +14976,7 @@ try {
 $bytesScanned = [long]0
 $regionsScanned = [int]0
 $regionsSkipped = [int]0
-$containerAddr = [Allium.ContainerScanner]::FindContainer(
+$containerAddr = [Vantastrap.ContainerScanner]::FindContainer(
 $Target.Handle, $Target.ModBase, $Target.ModSize,
 [ref]$bytesScanned, [ref]$regionsScanned, [ref]$regionsSkipped)
 Write-ConsoleLog -Message ("  [container-scan] Scan: bytesScanned=" + $bytesScanned + " regionsScanned=" + $regionsScanned + " regionsSkipped=" + $regionsSkipped) -Level 'INFO'
@@ -14986,7 +14986,7 @@ return $result
 }
 Write-ConsoleLog -Message ("  [container-scan] Container found at 0x" + ([int64]$containerAddr).ToString('X')) -Level 'INFO'
 $script:LastContainerScanAddress = $containerAddr
-$scanResult = [Allium.ContainerScanner]::DumpContainer(
+$scanResult = [Vantastrap.ContainerScanner]::DumpContainer(
 $Target.Handle, $containerAddr, $Target.ModBase, $Target.ModSize)
 if ($null -ne $scanResult.Error) {
 $result.Error = 'Container walk failed: ' + $scanResult.Error
@@ -15027,7 +15027,7 @@ $sw.Stop()
 $result.DurationMs = [int]$sw.ElapsedMilliseconds
 return $result
 }
-function Invoke-AlliumFlagValueMapDump {
+function Invoke-VantastrapFlagValueMapDump {
 [OutputType([hashtable])]
 param(
 [Parameter(Mandatory)] [hashtable] $Target,
@@ -15067,12 +15067,12 @@ if ($effectiveKnown -ne [IntPtr]::Zero) {
 $knownAddrL = [long]$effectiveKnown
 if ($knownAddrL -ge 0x10000 -and $knownAddrL -lt 0x7FFFFFFFFFFF) {
 try {
-$vBytes = [Allium.MemoryReader]::ReadBytes($Target.Handle, $effectiveKnown, 8)
+$vBytes = [Vantastrap.MemoryReader]::ReadBytes($Target.Handle, $effectiveKnown, 8)
 if ($vBytes.Length -ge 8) {
 $val = [System.BitConverter]::ToUInt64($vBytes, 0)
 if ($val -eq 0x3F800000) {
 Write-ConsoleLog -Message ('  [flag-value-map] ContainerScan-container fast-path: reusing 0x' + $knownAddrL.ToString('X') + ' (skipping candidate discovery)') -Level 'INFO'
-$scanRes = [Allium.FlagValueMapScanner]::WalkKnownMap($Target.Handle, $Target.ModBase,
+$scanRes = [Vantastrap.FlagValueMapScanner]::WalkKnownMap($Target.Handle, $Target.ModBase,
 [long]$modSize, [long]$knownAddrL, [int]$MaxNodes, [int]$MaxStringLen)
 $usedFastPath = $true
 }
@@ -15084,7 +15084,7 @@ $scanRes = $null
 }
 }
 if (-not $usedFastPath -or $null -eq $scanRes) {
-$scanRes = [Allium.FlagValueMapScanner]::Scan($Target.Handle, $Target.ModBase,
+$scanRes = [Vantastrap.FlagValueMapScanner]::Scan($Target.Handle, $Target.ModBase,
 [long]$ScanStart, [long]$ScanEnd, [int]$ChunkSize, [int]$MaxCandidates,
 [int]$MaxNodes, [int]$MaxStringLen, [long]$modSize, $fvarSet)
 }
@@ -15135,7 +15135,7 @@ $sw.Stop()
 $result.DurationMs = [int]$sw.ElapsedMilliseconds
 return $result
 }
-function Get-AlliumFlagValue {
+function Get-VantastrapFlagValue {
 [OutputType([hashtable])]
 param(
 [Parameter(Mandatory)] [string] $Name,
@@ -15145,15 +15145,15 @@ $fvm = $null
 if (-not $Refresh.IsPresent -and $null -ne $script:LastFvmDump -and $script:LastFvmDump.Flags -is [hashtable] -and $script:LastFvmDump.Flags.Count -gt 0) {
 $fvm = $script:LastFvmDump
 } else {
-$target = Get-AlliumFFlagDumpTarget
+$target = Get-VantastrapFFlagDumpTarget
 if (-not $target.Success) {
 return @{ Found = $false; Error = 'Target attach failed: ' + $target.Error }
 }
 try {
-$fvarLookup = Get-AlliumFVariables
-$fvm = Invoke-AlliumFlagValueMapDump -Target $target -FVarLookup $fvarLookup
+$fvarLookup = Get-VantastrapFVariables
+$fvm = Invoke-VantastrapFlagValueMapDump -Target $target -FVarLookup $fvarLookup
 } finally {
-try { [Allium.ProcessAttach]::Close($target.Handle) } catch { }
+try { [Vantastrap.ProcessAttach]::Close($target.Handle) } catch { }
 }
 }
 if ($null -eq $fvm -or $null -eq $fvm.Flags -or $fvm.Flags.Count -eq 0) {
@@ -15171,7 +15171,7 @@ return @{ Found = $true; Name = $e.Name; RawName = $e.RawName; Type = $e.Type; R
 }
 return @{ Found = $false; Error = ('Flag not found: ' + $Name) }
 }
-function Initialize-AlliumFvmFromExternalOffsets {
+function Initialize-VantastrapFvmFromExternalOffsets {
 [OutputType([hashtable])]
 param([switch] $ForceRefresh)
 $result = @{ Success = $false; EntryCount = 0; Version = ''; VersionMismatch = $false; Error = $null }
@@ -15192,7 +15192,7 @@ if (-not [string]::IsNullOrWhiteSpace($cachedVersion) -and $cachedVersion -ne $c
 $result.VersionMismatch = $true
 }
 $fvarLookup = @{}
-try { $fvarLookup = Get-AlliumFVariables } catch { $fvarLookup = @{} }
+try { $fvarLookup = Get-VantastrapFVariables } catch { $fvarLookup = @{} }
 $fvmFlags = @{}
 foreach ($rawKey in @($extCache.Flags.Keys)) {
 $rvaRaw = [string]$extCache.Flags[$rawKey]
@@ -15237,7 +15237,7 @@ $result.Error = 'External offsets prime failed: ' + $_.Exception.Message
 }
 return $result
 }
-function Set-AlliumFlagValue {
+function Set-VantastrapFlagValue {
 [OutputType([hashtable])]
 param(
 [Parameter(Mandatory)] [string] $Name,
@@ -15262,9 +15262,9 @@ Error = $null
 }
 }
 if ($Refresh.IsPresent) {
-$lookup = Get-AlliumFlagValue -Name $Name -Refresh
+$lookup = Get-VantastrapFlagValue -Name $Name -Refresh
 } else {
-$lookup = Get-AlliumFlagValue -Name $Name
+$lookup = Get-VantastrapFlagValue -Name $Name
 }
 if ($null -eq $lookup -or -not $lookup.Found) {
 $lookupErr = if ($null -eq $lookup) { 'null result' } else { $lookup.Error }
@@ -15285,7 +15285,7 @@ Success = $false
 Name = $lookup.Name
 Type = $type
 OldValue = $oldValue
-Error = 'String-typed flags are not writable via Set-AlliumFlagValue (requires SSO threshold handling). Modify ClientAppSettings.json instead.'
+Error = 'String-typed flags are not writable via Set-VantastrapFlagValue (requires SSO threshold handling). Modify ClientAppSettings.json instead.'
 }
 }
 if ($type -eq 'Unknown' -or $type -eq 'NoGetSet') {
@@ -15307,7 +15307,7 @@ Rva = $rvaHex
 Error = 'Storage RVA is not a valid module-relative offset.'
 }
 }
-$target = Get-AlliumFFlagDumpTarget
+$target = Get-VantastrapFFlagDumpTarget
 if (-not $target.Success) {
 return @{ Success = $false; Error = 'Attach failed: ' + $target.Error }
 }
@@ -15332,21 +15332,21 @@ Error = 'Type mismatch: cannot convert value ' + '"' + [string]$Value + '"' + ' 
 }
 $wr = $null
 switch ($type) {
-'Int' { $wr = [Allium.TypedWriters]::WriteInt($target.Handle, $storageAddr, $intVal) }
-'Log' { $wr = [Allium.TypedWriters]::WriteInt($target.Handle, $storageAddr, $intVal) }
+'Int' { $wr = [Vantastrap.TypedWriters]::WriteInt($target.Handle, $storageAddr, $intVal) }
+'Log' { $wr = [Vantastrap.TypedWriters]::WriteInt($target.Handle, $storageAddr, $intVal) }
 'Flag' {
 $b = $false
 if ($Value -is [bool]) { $b = [bool]$Value }
 elseif ($Value -is [string] -and ($Value -eq 'True' -or $Value -eq 'true' -or $Value -eq '1')) { $b = $true }
 elseif ($Value -is [int] -and $Value -ne 0) { $b = $true }
-$wr = [Allium.TypedWriters]::WriteBool($target.Handle, $storageAddr, $b)
+$wr = [Vantastrap.TypedWriters]::WriteBool($target.Handle, $storageAddr, $b)
 }
 'FlagAlt' {
 $b = $false
 if ($Value -is [bool]) { $b = [bool]$Value }
 elseif ($Value -is [string] -and ($Value -eq 'True' -or $Value -eq 'true' -or $Value -eq '1')) { $b = $true }
 elseif ($Value -is [int] -and $Value -ne 0) { $b = $true }
-$wr = [Allium.TypedWriters]::WriteBool($target.Handle, $storageAddr, $b)
+$wr = [Vantastrap.TypedWriters]::WriteBool($target.Handle, $storageAddr, $b)
 }
 default {
 return @{ Success = $false; Error = 'Unhandled type in write dispatch: ' + $type }
@@ -15365,7 +15365,7 @@ Error = 'Write failed: ' + $errMsg
 }
 $verifyMatch = $false
 $newReadValue = ''
-$vb = [Allium.MemoryReader]::ReadBytes($target.Handle, $storageAddr, 4)
+$vb = [Vantastrap.MemoryReader]::ReadBytes($target.Handle, $storageAddr, 4)
 if ($vb.Length -ge 4) {
 if ($type -eq 'Int' -or $type -eq 'Log') {
 $rv = [System.BitConverter]::ToInt32($vb, 0)
@@ -15394,7 +15394,7 @@ $effectNote = if ($lookup.Name -match '^(D[FS])') {
 'Static flag: change takes effect on next scene load (teleport/rejoin), not mid-session.'
 }
 if (-not $Quiet.IsPresent) {
-try { Write-ConsoleLog -Message ('Set-AlliumFlagValue: ' + $lookup.Name + ' = ' + $newReadValue + ' (' + $effectNote + ')') -Level 'INFO' } catch { }
+try { Write-ConsoleLog -Message ('Set-VantastrapFlagValue: ' + $lookup.Name + ' = ' + $newReadValue + ' (' + $effectNote + ')') -Level 'INFO' } catch { }
 }
 return @{
 Success = $true
@@ -15409,10 +15409,10 @@ VerifyMatch = $verifyMatch
 EffectivenessNote = $effectNote
 }
 } finally {
-try { [Allium.ProcessAttach]::Close($target.Handle) } catch { }
+try { [Vantastrap.ProcessAttach]::Close($target.Handle) } catch { }
 }
 }
-function Set-AlliumFlagValueBatch {
+function Set-VantastrapFlagValueBatch {
 [OutputType([hashtable])]
 param(
 [Parameter(Mandatory)] [hashtable] $Flags,
@@ -15440,7 +15440,7 @@ return $results
 try {
 if ($null -eq $script:LastFvmDump -or -not ($script:LastFvmDump.Flags -is [hashtable]) -or $script:LastFvmDump.Flags.Count -eq 0) {
 $firstName = @($Flags.Keys)[0]
-$null = Get-AlliumFlagValue -Name $firstName -Refresh
+$null = Get-VantastrapFlagValue -Name $firstName -Refresh
 }
 } catch {
 Write-ConsoleLog -Message ('[batch-v3] cache-fill phase threw: ' + $_.Exception.Message) -Level 'WARN'
@@ -15472,7 +15472,7 @@ Write-ConsoleLog -Message ('[batch-v3] reverse-index phase threw: ' + $_.Excepti
 $rawIndex = @{}
 }
 $target = $null
-try { $target = Get-AlliumFFlagDumpTarget } catch {
+try { $target = Get-VantastrapFFlagDumpTarget } catch {
 Write-ConsoleLog -Message ('[batch-v3] attach phase threw: ' + $_.Exception.Message) -Level 'WARN'
 }
 if ($null -eq $target -or -not $target.Success) {
@@ -15551,21 +15551,21 @@ continue
 }
 $wr = $null
 switch ($type) {
-'Int' { $wr = [Allium.TypedWriters]::WriteInt($target.Handle, $storageAddr, $intVal) }
-'Log' { $wr = [Allium.TypedWriters]::WriteInt($target.Handle, $storageAddr, $intVal) }
+'Int' { $wr = [Vantastrap.TypedWriters]::WriteInt($target.Handle, $storageAddr, $intVal) }
+'Log' { $wr = [Vantastrap.TypedWriters]::WriteInt($target.Handle, $storageAddr, $intVal) }
 'Flag' {
 $b = $false
 if ($val -is [bool]) { $b = [bool]$val }
 elseif ($val -is [string] -and ($val -eq 'True' -or $val -eq 'true' -or $val -eq '1')) { $b = $true }
 elseif ($val -is [int] -and $val -ne 0) { $b = $true }
-$wr = [Allium.TypedWriters]::WriteBool($target.Handle, $storageAddr, $b)
+$wr = [Vantastrap.TypedWriters]::WriteBool($target.Handle, $storageAddr, $b)
 }
 'FlagAlt' {
 $b = $false
 if ($val -is [bool]) { $b = [bool]$val }
 elseif ($val -is [string] -and ($val -eq 'True' -or $val -eq 'true' -or $val -eq '1')) { $b = $true }
 elseif ($val -is [int] -and $val -ne 0) { $b = $true }
-$wr = [Allium.TypedWriters]::WriteBool($target.Handle, $storageAddr, $b)
+$wr = [Vantastrap.TypedWriters]::WriteBool($target.Handle, $storageAddr, $b)
 }
 default {
 $results[$name] = @{ Success = $false; Name = $canonicalName; Error = 'Unhandled type: ' + $type }
@@ -15585,7 +15585,7 @@ $verifyMatch = $true
 $newReadValue = ''
 if ($Verify.IsPresent) {
 $verifyMatch = $false
-$vb = [Allium.MemoryReader]::ReadBytes($target.Handle, $storageAddr, 4)
+$vb = [Vantastrap.MemoryReader]::ReadBytes($target.Handle, $storageAddr, 4)
 if ($vb.Length -ge 4) {
 if ($type -eq 'Int' -or $type -eq 'Log') {
 $rv = [System.BitConverter]::ToInt32($vb, 0)
@@ -15622,7 +15622,7 @@ Error = 'Batch write exception: ' + $_.Exception.Message
 }
 }
 } finally {
-try { [Allium.ProcessAttach]::Close($target.Handle) } catch { }
+try { [Vantastrap.ProcessAttach]::Close($target.Handle) } catch { }
 }
 return $results
 } catch {
@@ -15657,14 +15657,14 @@ $rob = $false
 try { $rob = Test-RobloxRunning } catch { $rob = $false }
 if (-not $rob) { $stats.Skipped = $script:Flags.Count; return $stats }
 $__wdResults = @{}
-try { $__wdResults = Set-AlliumFlagValueBatch -Flags $script:Flags } catch { $__wdResults = @{} }
+try { $__wdResults = Set-VantastrapFlagValueBatch -Flags $script:Flags } catch { $__wdResults = @{} }
 foreach ($name in @($script:Flags.Keys)) {
 $wr = $null
 if ($__wdResults.ContainsKey($name)) {
 $wr = $__wdResults[$name]
 } else {
 $val = $script:Flags[$name]
-try { $wr = Set-AlliumFlagValue -Name $name -Value $val -Force -Quiet }
+try { $wr = Set-VantastrapFlagValue -Name $name -Value $val -Force -Quiet }
 catch { $wr = $null }
 }
 if ($null -eq $wr) { $stats.Failed++ }
@@ -15679,7 +15679,7 @@ $stats.Error = $_.Exception.Message
 }
 return $stats
 }
-function Merge-AlliumDumpQuorum {
+function Merge-VantastrapDumpQuorum {
 [OutputType([hashtable])]
 param(
 [hashtable] $Dynamic = @{},
@@ -15783,13 +15783,13 @@ FvmOnly = $fvmOnly
 Total = $merged.Count
 }
 }
-function Save-AlliumFFlagDump {
+function Save-VantastrapFFlagDump {
 [OutputType([string])]
 param(
 [Parameter(Mandatory)] [hashtable] $Summary,
 [string] $OutputDir = $null
 )
-Initialize-AlliumDumperDataDirs
+Initialize-VantastrapDumperDataDirs
 if ([string]::IsNullOrWhiteSpace($OutputDir)) { $OutputDir = $global:DumpsDir }
 $ts = [DateTime]::UtcNow.ToString('yyyyMMdd-HHmmss')
 $ver = if ($Summary.ContainsKey('Version')) { [string]$Summary['Version'] } else { 'unknown' }
@@ -15799,7 +15799,7 @@ Write-Json -Path $fpath -Data $Summary | Out-Null
 Write-ConsoleLog -Message ("Dump saved: " + $fpath) -Level 'INFO'
 return $fpath
 }
-function Invoke-AlliumSouloveryallDump {
+function Invoke-VantastrapSouloveryallDump {
 [OutputType([hashtable])]
 param(
 [Parameter(Mandatory)] [hashtable] $Target,
@@ -15862,9 +15862,9 @@ $sw.Stop()
 $result.DurationMs = [int]$sw.ElapsedMilliseconds
 return $result
 }
-function Update-AlliumFFlagGenealogy {
+function Update-VantastrapFFlagGenealogy {
 param([Parameter(Mandatory)] [hashtable] $Summary)
-Initialize-AlliumDumperDataDirs
+Initialize-VantastrapDumperDataDirs
 $ver = if ($Summary.ContainsKey('Version')) { [string]$Summary['Version'] } else { 'unknown' }
 $gpath = Join-Path $global:GenealogyDir ($ver + '.json')
 $existing = @{}
@@ -15887,7 +15887,7 @@ $existing['version'] = $ver
 $existing['last_updated'] = $entry.timestamp
 Write-Json -Path $gpath -Data $existing | Out-Null
 }
-function Test-AlliumFFlagDump {
+function Test-VantastrapFFlagDump {
 [OutputType([hashtable])]
 param([Parameter(Mandatory)] [hashtable] $Summary)
 $knownGood = @(
@@ -15920,7 +15920,7 @@ Missing = $missing
 Pass = ($found -eq $knownGood.Count)
 }
 }
-function Get-AlliumFvmPrefixType {
+function Get-VantastrapFvmPrefixType {
 param([string]$Name)
 if ([string]::IsNullOrEmpty($Name)) { return $null }
 if ($Name -match '^(DF|SF|F)Flag') { return 'Flag' }
@@ -15929,7 +15929,7 @@ if ($Name -match '^(DF|F)String') { return 'String' }
 if ($Name -match '^(DF|F)Log') { return 'Log' }
 return $null
 }
-function Repair-AlliumFvmTypeMap {
+function Repair-VantastrapFvmTypeMap {
 param([hashtable]$Dump)
 if ($null -eq $Dump -or -not ($Dump.Flags -is [hashtable]) -or $Dump.Flags.Count -eq 0) { return 0 }
 $flags = $Dump.Flags
@@ -15938,7 +15938,7 @@ foreach ($k in @($flags.Keys)) {
 $meta = $flags[$k]
 if ([string]$meta.Value -match '^VT:([0-9A-Fa-f]+)$') {
 $vt = $Matches[1]
-$t = Get-AlliumFvmPrefixType -Name ([string]$meta.Name)
+$t = Get-VantastrapFvmPrefixType -Name ([string]$meta.Name)
 if ($null -ne $t) {
 if (-not $votes.ContainsKey($vt)) { $votes[$vt] = @{} }
 if (-not $votes[$vt].ContainsKey($t)) { $votes[$vt][$t] = 0 }
@@ -15959,7 +15959,7 @@ foreach ($k in @($flags.Keys)) {
 $meta = $flags[$k]
 if ([string]$meta.Value -match '^VT:([0-9A-Fa-f]+)$') {
 $vt = $Matches[1]
-$pfx = Get-AlliumFvmPrefixType -Name ([string]$meta.Name)
+$pfx = Get-VantastrapFvmPrefixType -Name ([string]$meta.Name)
 if ($null -ne $pfx) {
 $newType = $pfx
 } elseif ($clusterType.ContainsKey($vt)) {
@@ -15977,7 +15977,7 @@ Write-ConsoleLog -Message ('  [flag-value-map] R30 type repair: ' + $clusterType
 }
 return $fixed
 }
-function Get-AlliumFFlagDump {
+function Get-VantastrapFFlagDump {
 [OutputType([hashtable])]
 param(
 [ValidateSet('Dynamic', 'Static', 'Auto')] [string] $Strategy = 'Auto',
@@ -15985,13 +15985,13 @@ param(
 )
 $overallSw = [System.Diagnostics.Stopwatch]::StartNew()
 Write-ConsoleLog -Message ("FFlag Dumper started: strategy=" + $Strategy) -Level 'INFO'
-$target = Get-AlliumFFlagDumpTarget
+$target = Get-VantastrapFFlagDumpTarget
 if (-not $target.Success) {
 Write-ConsoleLog -Message ("FFlag Dumper cannot attach: " + $target.Error) -Level 'ERROR'
 return @{ Success = $false; Error = $target.Error }
 }
 try {
-$fvarLookup = Get-AlliumFVariables
+$fvarLookup = Get-VantastrapFVariables
 $dynResult = @{ Flags = @{}; DurationMs = 0 }
 $stcResult = @{ Flags = @{}; DurationMs = 0 }
 $containerScanResult = @{ Flags = @{}; DurationMs = 0 }
@@ -15999,43 +15999,43 @@ $sovResult = @{ Flags = @{}; DurationMs = 0 }
 $fvmResult = @{ Flags = @{}; DurationMs = 0 }
 $strategiesUsed = @()
 if ($Strategy -in @('Static','Auto')) {
-$stcResult = Invoke-AlliumDumperStrategyByName -Name 'static-live' -Target $target -FVarLookup $fvarLookup
+$stcResult = Invoke-VantastrapDumperStrategyByName -Name 'static-live' -Target $target -FVarLookup $fvarLookup
 $strategiesUsed += 'static-live'
 if ($null -ne $stcResult.Error) {
 Write-ConsoleLog -Message ("Static-live warning: " + $stcResult.Error) -Level 'WARN'
 }
 }
 if ($Strategy -in @('ContainerScan','Auto')) {
-$containerScanResult = Invoke-AlliumDumperStrategyByName -Name 'container-scan' -Target $target -FVarLookup $fvarLookup
+$containerScanResult = Invoke-VantastrapDumperStrategyByName -Name 'container-scan' -Target $target -FVarLookup $fvarLookup
 $strategiesUsed += 'container-scan'
 if ($null -ne $containerScanResult.Error) {
 Write-ConsoleLog -Message ("Container Scan warning: " + $containerScanResult.Error) -Level 'WARN'
 }
 }
 if ($Strategy -eq 'Dynamic') {
-$dynResult = Invoke-AlliumDumperStrategyByName -Name 'bucket-walk' -Target $target -FVarLookup $fvarLookup
+$dynResult = Invoke-VantastrapDumperStrategyByName -Name 'bucket-walk' -Target $target -FVarLookup $fvarLookup
 $strategiesUsed += 'bucket-walk'
 if ($null -ne $dynResult.Error) {
 Write-ConsoleLog -Message ("Dynamic-hashmap warning: " + $dynResult.Error) -Level 'WARN'
 }
 }
 if ($Strategy -in @('Souloveryall','Auto')) {
-$sovResult = Invoke-AlliumDumperStrategyByName -Name 'souloveryall' -Target $target -FVarLookup $fvarLookup
+$sovResult = Invoke-VantastrapDumperStrategyByName -Name 'souloveryall' -Target $target -FVarLookup $fvarLookup
 $strategiesUsed += 'souloveryall'
 if ($null -ne $sovResult.Error) {
 Write-ConsoleLog -Message ("Souloveryall warning: " + $sovResult.Error) -Level 'WARN'
 }
 }
 if ($Strategy -in @('FlagValueMap','Auto')) {
-$fvmResult = Invoke-AlliumDumperStrategyByName -Name 'flag-value-map' -Target $target -FVarLookup $fvarLookup
+$fvmResult = Invoke-VantastrapDumperStrategyByName -Name 'flag-value-map' -Target $target -FVarLookup $fvarLookup
 $strategiesUsed += 'flag-value-map'
 if ($null -ne $fvmResult.Error) {
 Write-ConsoleLog -Message ("flag-value-map warning: " + $fvmResult.Error) -Level 'WARN'
 }
 }
 try {
-[void](Repair-AlliumFvmTypeMap -Dump $fvmResult)
-if ($null -ne $script:LastFvmDump) { [void](Repair-AlliumFvmTypeMap -Dump $script:LastFvmDump) }
+[void](Repair-VantastrapFvmTypeMap -Dump $fvmResult)
+if ($null -ne $script:LastFvmDump) { [void](Repair-VantastrapFvmTypeMap -Dump $script:LastFvmDump) }
 if ($fvmResult.Flags -is [hashtable] -and $fvmResult.Flags.Count -gt 0) {
 $__pt = @{ Flag = 0; Int = 0; String = 0; Log = 0; Unknown = 0; Other = 0 }
 foreach ($__fk in $fvmResult.Flags.Keys) {
@@ -16054,7 +16054,7 @@ elseif ($dynResult.Flags.Count -gt 0) { 'bucket-walk' }
 elseif ($sovResult.Flags.Count -gt 0) { 'souloveryall' }
 else { 'none' }
 Write-ConsoleLog -Message ("Primary strategy: " + $primaryStrategy + " (fvm=" + $fvmResult.Flags.Count + " container-scan=" + $containerScanResult.Flags.Count + " static=" + $stcResult.Flags.Count + " dyn=" + $dynResult.Flags.Count + " sov=" + $sovResult.Flags.Count + ")") -Level 'INFO'
-$quorum = Merge-AlliumDumpQuorum -Dynamic $dynResult.Flags -Static $stcResult.Flags -ContainerScan $containerScanResult.Flags -Souloveryall $sovResult.Flags -FlagValueMap $fvmResult.Flags
+$quorum = Merge-VantastrapDumpQuorum -Dynamic $dynResult.Flags -Static $stcResult.Flags -ContainerScan $containerScanResult.Flags -Souloveryall $sovResult.Flags -FlagValueMap $fvmResult.Flags
 try {
 if ($null -ne $script:RefreshDumperDiagnostics) {
 & $script:RefreshDumperDiagnostics
@@ -16084,9 +16084,9 @@ Flags = $quorum.Flags
 if ($quorum.Disagree -gt 0) {
 Write-ConsoleLog -Message ("Quorum divergence: " + $quorum.Disagree + " flag(s) with mismatched RVAs across >=2 memory sources. This may indicate Roblox client drift.") -Level 'WARN'
 }
-Update-AlliumFFlagGenealogy -Summary $summary
+Update-VantastrapFFlagGenealogy -Summary $summary
 if (-not $NoSave) {
-$path = Save-AlliumFFlagDump -Summary $summary
+$path = Save-VantastrapFFlagDump -Summary $summary
 $summary['DumpPath'] = $path
 }
 $script:LastDumpSummary = $summary
@@ -16102,7 +16102,7 @@ $script:DumperStatusRefs.AgreementRow.Text = $agreeText
 Write-ConsoleLog -Message ("FFlag Dumper complete: " + $quorum.Total + " flags in " + $summary.DurationMs + " ms") -Level 'INFO'
 return $summary
 } finally {
-try { [Allium.ProcessAttach]::Close($target.Handle) } catch { }
+try { [Vantastrap.ProcessAttach]::Close($target.Handle) } catch { }
 }
 }
 function Start-HttpIntercept {
@@ -16115,22 +16115,22 @@ Write-ConsoleLog -Message 'HTTPS interceptor already running.' -Level 'INFO'
 return $true
 }
 if (-not (Test-Path $script:HttpsInterceptCaPfxFile -PathType Leaf)) {
-Write-ConsoleLog -Message 'HTTPS CA PFX missing; running Install-AlliumProxyCA first.' -Level 'WARN'
-$__caResult = Install-AlliumProxyCA
+Write-ConsoleLog -Message 'HTTPS CA PFX missing; running Install-VantastrapProxyCA first.' -Level 'WARN'
+$__caResult = Install-VantastrapProxyCA
 if ($null -eq $__caResult -or -not $__caResult.Success) {
 Write-ConsoleLog -Message 'HTTPS CA install failed; aborting proxy start.' -Level 'ERROR'
 return $false
 }
 }
 try {
-$__caPfx = [Allium.HttpsCaGenerator]::LoadPfx($script:HttpsInterceptCaPfxFile)
-[Allium.HttpsLeafCertFactory]::SetRootCa($__caPfx)
+$__caPfx = [Vantastrap.HttpsCaGenerator]::LoadPfx($script:HttpsInterceptCaPfxFile)
+[Vantastrap.HttpsLeafCertFactory]::SetRootCa($__caPfx)
 } catch {
 Write-ConsoleLog -Message ('HTTPS CA load failed: ' + $_.Exception.Message) -Level 'ERROR'
 return $false
 }
 try {
-$script:HttpsInterceptorInstance = [Allium.HttpsInterceptor]::new()
+$script:HttpsInterceptorInstance = [Vantastrap.HttpsInterceptor]::new()
 try { $script:HttpsInterceptorInstance.BandwidthSaverEnabled = [bool]$script:BandwidthSaverMode } catch {}
 if ($null -ne $script:Flags -and $script:Flags.Count -gt 0) {
 Update-InterceptorOverrides
@@ -16143,24 +16143,24 @@ try { if ($null -ne $script:HttpsInterceptorInstance) { $script:HttpsInterceptor
 $script:HttpsInterceptorInstance = $null
 return $false
 }
-if (-not (Install-AlliumHosts)) {
+if (-not (Install-VantastrapHosts)) {
 Write-ConsoleLog -Message 'Hosts install failed; tearing down proxy.' -Level 'ERROR'
 try { $script:HttpsInterceptorInstance.Stop() } catch {}
 try { $script:HttpsInterceptorInstance.Dispose() } catch {}
 $script:HttpsInterceptorInstance = $null
 return $false
 }
-try { Register-AlliumHostsWatchdog } catch {
+try { Register-VantastrapHostsWatchdog } catch {
 Write-ConsoleLog -Message ('Hosts watchdog register failed (non-fatal): ' + $_.Exception.Message) -Level 'WARN'
 }
 Write-ConsoleLog -Message ('HTTPS Interception started on port ' + $__port + ' (' + $script:HttpsInterceptorInstance.FlagOverrideCount + ' override(s) active)') -Level 'INFO'
 return $true
 }
 function Stop-HttpIntercept {
-try { Unregister-AlliumHostsWatchdog } catch {
+try { Unregister-VantastrapHostsWatchdog } catch {
 Write-ConsoleLog -Message ('Watchdog unregister failed (non-fatal): ' + $_.Exception.Message) -Level 'WARN'
 }
-try { Uninstall-AlliumHosts | Out-Null } catch {
+try { Uninstall-VantastrapHosts | Out-Null } catch {
 Write-ConsoleLog -Message ('Hosts uninstall failed (non-fatal): ' + $_.Exception.Message) -Level 'WARN'
 }
 if ($null -ne $script:HttpsInterceptorInstance) {
@@ -16172,7 +16172,7 @@ Write-ConsoleLog -Message 'HTTPS Interception stopped.' -Level 'INFO'
 }
 function Show-SplashWindow {
 $win = [WinUIShell.Microsoft.UI.Xaml.Window]::new()
-$win.Title = 'Launching Allium...'
+$win.Title = 'Launching Vantastrap...'
 $win.ExtendsContentIntoTitleBar = $true
 try {
 $win.AppWindow.Resize(300, 120)
@@ -16190,7 +16190,7 @@ $panel.VerticalAlignment = [WinUIShell.Microsoft.UI.Xaml.VerticalAlignment]::Cen
 $panel.HorizontalAlignment = [WinUIShell.Microsoft.UI.Xaml.HorizontalAlignment]::Center
 $panel.Spacing = 8
 $txt = [WinUIShell.Microsoft.UI.Xaml.Controls.TextBlock]::new()
-$txt.Text = "Loading Allium..."
+$txt.Text = "Loading Vantastrap..."
 Set-SafeFontFamily -Target $txt -Family $script:AppFontFamily
 $txt.FontSize = 14
 $txt.Foreground = New-SolidBrush -Hex $script:ThemeColors.TextPrimary
@@ -16206,13 +16206,13 @@ return $win
 }
 Load-Settings
 try {
-Import-AlliumDependencies | Out-Null
+Import-VantastrapDependencies | Out-Null
 } catch {
-Write-ConsoleLog -Message ('Boot-time Import-AlliumDependencies failed: ' + $_.Exception.Message) -Level 'WARN'
+Write-ConsoleLog -Message ('Boot-time Import-VantastrapDependencies failed: ' + $_.Exception.Message) -Level 'WARN'
 }
 if ($script:Settings.httpInterceptEnabled) {
 try {
-$__caRepair = Install-AlliumProxyCA
+$__caRepair = Install-VantastrapProxyCA
 if ($null -ne $__caRepair -and $__caRepair.Installed -gt 0) {
 Write-ConsoleLog -Message ('HTTPS CA auto-repair installed into ' + $__caRepair.Installed + ' new location(s)') -Level 'INFO'
 }
